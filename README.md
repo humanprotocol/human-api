@@ -11,7 +11,7 @@ To run the server, please execute the following from the root directory:
 
 ```
 pip3 install -r requirements.txt
-python3 -m swagger_server
+python3 -m human_api
 ```
 
 and open your browser to here:
@@ -38,8 +38,8 @@ To run the server on a Docker container, please execute the following from the r
 
 ```bash
 # building the image
-docker build -t swagger_server .
+docker build -t human_api .
 
 # starting up a container
-docker run -p 8080:8080 swagger_server
+docker run -p 8080:8080 human_api
 ```
