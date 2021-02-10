@@ -1,0 +1,907 @@
+openapi: 3.0.0
+info:
+  title: Human Protocol API
+  description: Rest interface to interact with the Human Protocol
+  contact:
+    email: dev@hmt.ai
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  version: 1.0.0
+servers:
+- url: /
+tags:
+- name: Network
+  description: Endpoint for viewing and adding networks to the protocol
+- name: Factory
+  description: Endpoint for Job factory management
+- name: Manifest
+  description: Endpoint for Manifest management
+- name: Jobs
+  description: Endpoint for all job management
+paths:
+  /network:
+    get:
+      tags:
+      - Network
+      summary: Get list of all available networks
+      description: |
+        Get list of all available networks
+      operationId: get_networks
+      responses:
+        "200":
+          description: List of all available networks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/network_list_response'
+      x-openapi-router-controller: swagger_server.controllers.network_controller
+  /network/stats:
+    get:
+      tags:
+      - Network
+      summary: Get network statistics
+      description: |
+        Get network statistics
+      operationId: get_network_stats
+      parameters:
+      - name: networkId
+        in: query
+        description: Unique ID of network
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Network Stats
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/network_stats_response'
+      x-openapi-router-controller: swagger_server.controllers.network_controller
+  /factory:
+    get:
+      tags:
+      - Factory
+      summary: Returns addresses of all jobs deployed in the factory
+      description: |
+        Receive the list of all jobs in the factory
+      operationId: get_factory
+      parameters:
+      - name: address
+        in: query
+        description: Deployed Factory address
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: gasPayer
+        in: query
+        description: address paying for the gas costs
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: gasPayerPrivate
+        in: query
+        description: Private Key for the address paying for the gas costs
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: networkKey
+        in: query
+        description: Unique Identifier for the blockchain network to use. (0 is the
+          default for Ethereum mainnet)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          default: 0
+      responses:
+        "200":
+          description: List of all jobs deployed in the factory
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/job_list_response'
+        "400":
+          description: invalid input parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_parameter_response'
+        "404":
+          description: Address does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_notexist_response'
+      x-openapi-router-controller: swagger_server.controllers.factory_controller
+    post:
+      tags:
+      - Factory
+      summary: Creates a new factory and returns the address
+      description: Creates a new factory and returns the address
+      operationId: new_factory
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/factory_create_body'
+      responses:
+        "200":
+          description: Launched address of the factory
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/string_data_response'
+        "400":
+          description: invalid input parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_parameter_response'
+        "500":
+          description: Could not create factory
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_notcreate_response'
+      x-openapi-router-controller: swagger_server.controllers.factory_controller
+  /manifest/validate:
+    get:
+      tags:
+      - Manifest
+      summary: Validates a manifest provided by a public URL
+      description: |
+        Validates a manifest provided by a public URL
+      operationId: validate_manifest
+      parameters:
+      - name: manifestUrl
+        in: query
+        description: Publicly available manifest URL
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Validation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/manifest_validity_response'
+        "404":
+          description: URL does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_notexist_response'
+      x-openapi-router-controller: swagger_server.controllers.manifest_controller
+  /job:
+    post:
+      tags:
+      - Jobs
+      summary: Creates a new Job and returns the address
+      description: Creates a new job and returns the address
+      operationId: new_job
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/job_create_body'
+      responses:
+        "200":
+          description: Deployed address of the job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/string_data_response'
+        "401":
+          description: invalid input parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_parameter_response'
+      x-openapi-router-controller: swagger_server.controllers.jobs_controller
+  /job/launcher:
+    get:
+      tags:
+      - Jobs
+      summary: Address of the launcher of a given job address
+      description: |
+        Receive the address of the launcher of a given job address
+      operationId: get_job_launcher
+      parameters:
+      - name: address
+        in: query
+        description: Deployed Job address
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: gasPayer
+        in: query
+        description: address paying for the gas costs
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: gasPayerPrivate
+        in: query
+        description: Private Key for the address paying for the gas costs
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: networkKey
+        in: query
+        description: Unique Identifier for the blockchain network to use. (0 is the
+          default for Ethereum mainnet)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          default: 0
+      responses:
+        "200":
+          description: Launcher address of the job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/string_data_response'
+        "400":
+          description: invalid input parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_parameter_response'
+        "404":
+          description: Address does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_notcreate_response'
+      x-openapi-router-controller: swagger_server.controllers.jobs_controller
+  /job/status:
+    get:
+      tags:
+      - Jobs
+      summary: Status of a given job address
+      description: |
+        Receive the status of a given job address
+      operationId: get_job_status
+      parameters:
+      - name: address
+        in: query
+        description: Deployed Job address
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: gasPayer
+        in: query
+        description: address paying for the gas costs
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: gasPayerPrivate
+        in: query
+        description: Private Key for the address paying for the gas costs
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: networkKey
+        in: query
+        description: Unique Identifier for the blockchain network to use. (0 is the
+          default for Ethereum mainnet)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          default: 0
+      responses:
+        "200":
+          description: Status of the job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/job_status_response'
+        "400":
+          description: invalid input parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_parameter_response'
+        "404":
+          description: Address does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_notexist_response'
+      x-openapi-router-controller: swagger_server.controllers.jobs_controller
+  /job/manifestUrl:
+    get:
+      tags:
+      - Jobs
+      summary: Manifest URL of a given job address
+      description: |
+        Receive the Manifest URL of a given job address
+      operationId: get_job_manifest_url
+      parameters:
+      - name: address
+        in: query
+        description: Deployed Job address
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: gasPayer
+        in: query
+        description: address paying for the gas costs
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: gasPayerPrivate
+        in: query
+        description: Private Key for the address paying for the gas costs
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: networkKey
+        in: query
+        description: Unique Identifier for the blockchain network to use. (0 is the
+          default for Ethereum mainnet)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          default: 0
+      responses:
+        "200":
+          description: Manifest URL of the job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/string_data_response'
+        "400":
+          description: invalid input parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_parameter_response'
+        "404":
+          description: Address does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_notexist_response'
+      x-openapi-router-controller: swagger_server.controllers.jobs_controller
+  /job/manifestHash:
+    get:
+      tags:
+      - Jobs
+      summary: Manifest Hash of a given job address
+      description: |
+        Receive the Manifest Hash of a given job address
+      operationId: get_job_manifest_hash
+      parameters:
+      - name: address
+        in: query
+        description: Deployed Job address
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: gasPayer
+        in: query
+        description: address paying for the gas costs
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: gasPayerPrivate
+        in: query
+        description: Private Key for the address paying for the gas costs
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: networkKey
+        in: query
+        description: Unique Identifier for the blockchain network to use. (0 is the
+          default for Ethereum mainnet)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          default: 0
+      responses:
+        "200":
+          description: Manifest Hash of the job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/string_data_response'
+        "400":
+          description: invalid input parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_parameter_response'
+        "404":
+          description: Address does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_notexist_response'
+      x-openapi-router-controller: swagger_server.controllers.jobs_controller
+  /job/balance:
+    get:
+      tags:
+      - Jobs
+      summary: Balance in HMT of a given job address
+      description: |
+        Balance in HMT of a given job address
+      operationId: get_job_balanace
+      parameters:
+      - name: address
+        in: query
+        description: Deployed Job address
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: gasPayer
+        in: query
+        description: address paying for the gas costs
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: gasPayerPrivate
+        in: query
+        description: Private Key for the address paying for the gas costs
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: networkKey
+        in: query
+        description: Unique Identifier for the blockchain network to use. (0 is the
+          default for Ethereum mainnet)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          default: 0
+      responses:
+        "200":
+          description: Manifest Hash of the job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/int_data_response'
+        "400":
+          description: invalid input parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_parameter_response'
+        "404":
+          description: Address does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_notexist_response'
+      x-openapi-router-controller: swagger_server.controllers.jobs_controller
+  /job/abort:
+    get:
+      tags:
+      - Jobs
+      summary: Abort a given job
+      description: |
+        Abort a given job
+      operationId: abort_job
+      parameters:
+      - name: address
+        in: query
+        description: Deployed Job address
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: gasPayer
+        in: query
+        description: address paying which started the job or a trusted handler
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: gasPayerPrivate
+        in: query
+        description: Private Key for the address paying for the gas costs
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: networkKey
+        in: query
+        description: Unique Identifier for the blockchain network to use. (0 is the
+          default for Ethereum mainnet)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          default: 0
+      responses:
+        "200":
+          description: Was the action successful or not
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bool_data_response'
+        "400":
+          description: invalid input parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_parameter_response'
+        "401":
+          description: Unauthorized Gas Payer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_unauthorized_response'
+        "404":
+          description: Address does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_notexist_response'
+      x-openapi-router-controller: swagger_server.controllers.jobs_controller
+  /job/cancel:
+    get:
+      tags:
+      - Jobs
+      summary: Cancel a given job
+      description: |
+        Cancel a given job
+      operationId: cancel_job
+      parameters:
+      - name: address
+        in: query
+        description: Deployed Job address
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: gasPayer
+        in: query
+        description: address paying which started the job or a trusted handler
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: gasPayerPrivate
+        in: query
+        description: Private Key for the address paying for the gas costs
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: networkKey
+        in: query
+        description: Unique Identifier for the blockchain network to use. (0 is the
+          default for Ethereum mainnet)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          default: 0
+      responses:
+        "200":
+          description: Was the action successful or not
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bool_data_response'
+        "400":
+          description: invalid input parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_parameter_response'
+        "401":
+          description: Unauthorized Gas Payer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_unauthorized_response'
+        "404":
+          description: Address does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_notexist_response'
+      x-openapi-router-controller: swagger_server.controllers.jobs_controller
+  /job/complete:
+    get:
+      tags:
+      - Jobs
+      summary: Complete a given job
+      description: |
+        Complete a given job
+      operationId: complete_job
+      parameters:
+      - name: address
+        in: query
+        description: Deployed Job address
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: gasPayer
+        in: query
+        description: address paying which started the job or a trusted handler
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: gasPayerPrivate
+        in: query
+        description: Private Key for the address paying for the gas costs
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: networkKey
+        in: query
+        description: Unique Identifier for the blockchain network to use. (0 is the
+          default for Ethereum mainnet)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          default: 0
+      responses:
+        "200":
+          description: Was the action successful or not
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bool_data_response'
+        "400":
+          description: invalid input parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_parameter_response'
+        "401":
+          description: Unauthorized Gas Payer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_unauthorized_response'
+        "404":
+          description: Address does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_notexist_response'
+      x-openapi-router-controller: swagger_server.controllers.jobs_controller
+components:
+  schemas:
+    network_list_response:
+      type: object
+      properties:
+        networks:
+          type: array
+          items:
+            $ref: '#/components/schemas/network_list_response_networks'
+      example:
+        networks:
+        - network_name: ethereum-main
+          networkId: 0
+        - network_name: ethereum-main
+          networkId: 0
+    network_stats_response:
+      type: object
+      properties:
+        networkId:
+          type: integer
+        network_name:
+          type: string
+          example: ethereum-main
+        factory_count:
+          type: integer
+        job_count:
+          type: integer
+        total_payouts:
+          type: integer
+      example:
+        job_count: 1
+        total_payouts: 5
+        network_name: ethereum-main
+        networkId: 0
+        factory_count: 6
+    job_list_response:
+      type: object
+      properties:
+        jobs:
+          type: array
+          items:
+            type: string
+      example:
+        jobs:
+        - 0x000000abcdef
+        - 0x000000abcdef
+    factory_create_body:
+      type: object
+      properties:
+        gasPayer:
+          type: string
+        gasPayerPrivate:
+          type: string
+        networkId:
+          type: integer
+          default: 0
+    manifest_validity_response:
+      type: object
+      properties:
+        valid:
+          type: boolean
+          example: false
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/error_parameter_response'
+      example:
+        valid: false
+        errors:
+        - parameter_name: gas_payer
+          error: Invalid parameter
+        - parameter_name: gas_payer
+          error: Invalid parameter
+    job_create_body:
+      type: object
+      properties:
+        gasPayer:
+          type: string
+          example: 0x000000000000000
+        gasPayerPrivate:
+          type: string
+          example: 0x000000000000000
+        factoryAddress:
+          type: string
+          example: 0x000000000000000
+        repOraclePub:
+          type: string
+          example: <reputation oracles public address> 0x0000000
+        manifestUrl:
+          type: string
+          example: http://example.com/manifest.json
+        networkId:
+          type: integer
+          default: 0
+    job_status_response:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - Launched
+          - Pending
+          - Partial
+          - Paid
+          - Complete
+          - Cancelled
+      example:
+        status: Launched
+    string_data_response:
+      type: object
+      properties:
+        data:
+          type: string
+          example: data
+      example:
+        data: data
+    int_data_response:
+      type: object
+      properties:
+        data:
+          type: integer
+          example: 110000
+      example:
+        data: 110000
+    bool_data_response:
+      type: object
+      properties:
+        success:
+          type: boolean
+      example:
+        success: true
+    error_notcreate_response:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Could not create
+    error_parameter_response:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Invalid parameter
+        parameter_name:
+          type: string
+          example: gas_payer
+      example:
+        parameter_name: gas_payer
+        error: Invalid parameter
+    error_notexist_response:
+      type: object
+      properties:
+        error:
+          type: string
+          example: address / url does not exist
+    error_unauthorized_response:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Unauthorized
+    network_list_response_networks:
+      type: object
+      properties:
+        network_name:
+          type: string
+          example: ethereum-main
+        networkId:
+          type: integer
+      example: '{"network_name":"ethereum-main","networkId":0}'
+
