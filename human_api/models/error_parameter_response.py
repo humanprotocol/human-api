@@ -14,7 +14,7 @@ class ErrorParameterResponse(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, error: str=None, parameter_name: str=None):  # noqa: E501
+    def __init__(self, error: str = None, parameter_name: str = None):  # noqa: E501
         """ErrorParameterResponse - a model defined in Swagger
 
         :param error: The error of this ErrorParameterResponse.  # noqa: E501
@@ -22,15 +22,9 @@ class ErrorParameterResponse(Model):
         :param parameter_name: The parameter_name of this ErrorParameterResponse.  # noqa: E501
         :type parameter_name: str
         """
-        self.swagger_types = {
-            'error': str,
-            'parameter_name': str
-        }
+        self.swagger_types = {'error': str, 'parameter_name': str}
 
-        self.attribute_map = {
-            'error': 'error',
-            'parameter_name': 'parameter_name'
-        }
+        self.attribute_map = {'error': 'error', 'parameter_name': 'parameter_name'}
         self._error = error
         self._parameter_name = parameter_name
 

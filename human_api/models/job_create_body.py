@@ -14,7 +14,13 @@ class JobCreateBody(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, gas_payer: str=None, gas_payer_private: str=None, factory_address: str=None, rep_oracle_pub: str=None, manifest_url: str=None, network_id: int=0):  # noqa: E501
+    def __init__(self,
+                 gas_payer: str = None,
+                 gas_payer_private: str = None,
+                 factory_address: str = None,
+                 rep_oracle_pub: str = None,
+                 manifest_url: str = None,
+                 network_id: int = 0):  # noqa: E501
         """JobCreateBody - a model defined in Swagger
 
         :param gas_payer: The gas_payer of this JobCreateBody.  # noqa: E501

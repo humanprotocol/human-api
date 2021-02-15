@@ -15,7 +15,9 @@ class ManifestValidityResponse(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, valid: bool=None, errors: List[ErrorParameterResponse]=None):  # noqa: E501
+    def __init__(self,
+                 valid: bool = None,
+                 errors: List[ErrorParameterResponse] = None):  # noqa: E501
         """ManifestValidityResponse - a model defined in Swagger
 
         :param valid: The valid of this ManifestValidityResponse.  # noqa: E501
@@ -23,15 +25,9 @@ class ManifestValidityResponse(Model):
         :param errors: The errors of this ManifestValidityResponse.  # noqa: E501
         :type errors: List[ErrorParameterResponse]
         """
-        self.swagger_types = {
-            'valid': bool,
-            'errors': List[ErrorParameterResponse]
-        }
+        self.swagger_types = {'valid': bool, 'errors': List[ErrorParameterResponse]}
 
-        self.attribute_map = {
-            'valid': 'valid',
-            'errors': 'errors'
-        }
+        self.attribute_map = {'valid': 'valid', 'errors': 'errors'}
         self._valid = valid
         self._errors = errors
 

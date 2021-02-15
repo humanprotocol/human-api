@@ -1,0 +1,14 @@
+#!/bin/bash
+set -exu
+
+default_lint='setup.py chainsync contracts human_api'
+LINT=${1-$default_lint}
+
+if [ -z ${CI+x} ]; then
+	yapf -i --recursive --style yapf.cfg ${LINT}
+else
+	yapf --diff --recursive --style yapf.cfg ${LINT}
+fi
+
+# This requirement needs havy refactoring (lots of errors). To do at a later time.
+# mypy --ignore-missing-imports ${LINT}

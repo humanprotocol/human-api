@@ -14,7 +14,7 @@ class NetworkListResponseNetworks(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, network_name: str=None, network_id: int=None):  # noqa: E501
+    def __init__(self, network_name: str = None, network_id: int = None):  # noqa: E501
         """NetworkListResponseNetworks - a model defined in Swagger
 
         :param network_name: The network_name of this NetworkListResponseNetworks.  # noqa: E501
@@ -22,15 +22,9 @@ class NetworkListResponseNetworks(Model):
         :param network_id: The network_id of this NetworkListResponseNetworks.  # noqa: E501
         :type network_id: int
         """
-        self.swagger_types = {
-            'network_name': str,
-            'network_id': int
-        }
+        self.swagger_types = {'network_name': str, 'network_id': int}
 
-        self.attribute_map = {
-            'network_name': 'network_name',
-            'network_id': 'networkId'
-        }
+        self.attribute_map = {'network_name': 'network_name', 'network_id': 'networkId'}
         self._network_name = network_name
         self._network_id = network_id
 

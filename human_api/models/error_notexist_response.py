@@ -14,19 +14,15 @@ class ErrorNotexistResponse(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, error: str=None):  # noqa: E501
+    def __init__(self, error: str = None):  # noqa: E501
         """ErrorNotexistResponse - a model defined in Swagger
 
         :param error: The error of this ErrorNotexistResponse.  # noqa: E501
         :type error: str
         """
-        self.swagger_types = {
-            'error': str
-        }
+        self.swagger_types = {'error': str}
 
-        self.attribute_map = {
-            'error': 'error'
-        }
+        self.attribute_map = {'error': 'error'}
         self._error = error
 
     @classmethod

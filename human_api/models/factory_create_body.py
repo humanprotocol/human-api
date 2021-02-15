@@ -14,7 +14,10 @@ class FactoryCreateBody(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, gas_payer: str=None, gas_payer_private: str=None, network_id: int=0):  # noqa: E501
+    def __init__(self,
+                 gas_payer: str = None,
+                 gas_payer_private: str = None,
+                 network_id: int = 0):  # noqa: E501
         """FactoryCreateBody - a model defined in Swagger
 
         :param gas_payer: The gas_payer of this FactoryCreateBody.  # noqa: E501
@@ -24,11 +27,7 @@ class FactoryCreateBody(Model):
         :param network_id: The network_id of this FactoryCreateBody.  # noqa: E501
         :type network_id: int
         """
-        self.swagger_types = {
-            'gas_payer': str,
-            'gas_payer_private': str,
-            'network_id': int
-        }
+        self.swagger_types = {'gas_payer': str, 'gas_payer_private': str, 'network_id': int}
 
         self.attribute_map = {
             'gas_payer': 'gasPayer',

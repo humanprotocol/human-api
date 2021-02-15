@@ -1,0 +1,7 @@
+#!/bin/bash
+set -exu
+
+./bin/stop
+
+docker-compose build
+docker-compose run --no-deps -e CI=true human-api bash -c "tox"

@@ -14,19 +14,15 @@ class StringDataResponse(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, data: str=None):  # noqa: E501
+    def __init__(self, data: str = None):  # noqa: E501
         """StringDataResponse - a model defined in Swagger
 
         :param data: The data of this StringDataResponse.  # noqa: E501
         :type data: str
         """
-        self.swagger_types = {
-            'data': str
-        }
+        self.swagger_types = {'data': str}
 
-        self.attribute_map = {
-            'data': 'data'
-        }
+        self.attribute_map = {'data': 'data'}
         self._data = data
 
     @classmethod

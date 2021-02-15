@@ -16,22 +16,15 @@ from human_api.test import BaseTestCase
 
 class TestFactoryController(BaseTestCase):
     """FactoryController integration test stubs"""
-
     def test_get_factory(self):
         """Test case for get_factory
 
         Returns addresses of all jobs deployed in the factory
         """
-        query_string = [('address', 'address_example'),
-                        ('gas_payer', 'gas_payer_example'),
-                        ('gas_payer_private', 'gas_payer_private_example'),
-                        ('network_key', 0)]
-        response = self.client.open(
-            '/factory',
-            method='GET',
-            query_string=query_string)
-        self.assert200(response,
-                       'Response body is : ' + response.data.decode('utf-8'))
+        query_string = [('address', 'address_example'), ('gas_payer', 'gas_payer_example'),
+                        ('gas_payer_private', 'gas_payer_private_example'), ('network_key', 0)]
+        response = self.client.open('/factory', method='GET', query_string=query_string)
+        self.assert200(response, 'Response body is : ' + response.data.decode('utf-8'))
 
     def test_new_factory(self):
         """Test case for new_factory
@@ -39,13 +32,11 @@ class TestFactoryController(BaseTestCase):
         Creates a new factory and returns the address
         """
         body = FactoryCreateBody()
-        response = self.client.open(
-            '/factory',
-            method='POST',
-            data=json.dumps(body),
-            content_type='application/json')
-        self.assert200(response,
-                       'Response body is : ' + response.data.decode('utf-8'))
+        response = self.client.open('/factory',
+                                    method='POST',
+                                    data=json.dumps(body),
+                                    content_type='application/json')
+        self.assert200(response, 'Response body is : ' + response.data.decode('utf-8'))
 
 
 if __name__ == '__main__':

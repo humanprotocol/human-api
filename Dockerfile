@@ -1,16 +1,14 @@
-FROM python:3.6-alpine
+FROM python:3.8
 
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
+WORKDIR /work
 
-COPY requirements.txt /usr/src/app/
+RUN pip install poetry
 
-RUN pip3 install --no-cache-dir -r requirements.txt
+COPY pyproject.toml poetry.lock ./
 
-COPY . /usr/src/app
+RUN poetry config virtualenvs.create false \
+  && poetry install --no-interaction --no-ansi
 
-EXPOSE 8080
+COPY . .
 
-ENTRYPOINT ["python3"]
-
-CMD ["-m", "human_api"]
+CMD ["python3", "-m", "human_api"]
