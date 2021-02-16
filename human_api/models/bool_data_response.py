@@ -14,19 +14,15 @@ class BoolDataResponse(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, success: bool=None):  # noqa: E501
+    def __init__(self, success: bool = None):  # noqa: E501
         """BoolDataResponse - a model defined in Swagger
 
         :param success: The success of this BoolDataResponse.  # noqa: E501
         :type success: bool
         """
-        self.swagger_types = {
-            'success': bool
-        }
+        self.swagger_types = {'success': bool}
 
-        self.attribute_map = {
-            'success': 'success'
-        }
+        self.attribute_map = {'success': 'success'}
         self._success = success
 
     @classmethod

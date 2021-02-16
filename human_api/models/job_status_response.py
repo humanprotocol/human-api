@@ -14,19 +14,15 @@ class JobStatusResponse(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, status: str=None):  # noqa: E501
+    def __init__(self, status: str = None):  # noqa: E501
         """JobStatusResponse - a model defined in Swagger
 
         :param status: The status of this JobStatusResponse.  # noqa: E501
         :type status: str
         """
-        self.swagger_types = {
-            'status': str
-        }
+        self.swagger_types = {'status': str}
 
-        self.attribute_map = {
-            'status': 'status'
-        }
+        self.attribute_map = {'status': 'status'}
         self._status = status
 
     @classmethod
@@ -58,11 +54,10 @@ class JobStatusResponse(Model):
         :param status: The status of this JobStatusResponse.
         :type status: str
         """
-        allowed_values = ["Launched", "Pending", "Partial", "Paid", "Complete", "Cancelled"]  # noqa: E501
+        allowed_values = ["Launched", "Pending", "Partial", "Paid", "Complete",
+                          "Cancelled"]  # noqa: E501
         if status not in allowed_values:
-            raise ValueError(
-                "Invalid value for `status` ({0}), must be one of {1}"
-                .format(status, allowed_values)
-            )
+            raise ValueError("Invalid value for `status` ({0}), must be one of {1}".format(
+                status, allowed_values))
 
         self._status = status

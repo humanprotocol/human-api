@@ -14,7 +14,12 @@ class NetworkStatsResponse(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, network_id: int=None, network_name: str=None, factory_count: int=None, job_count: int=None, total_payouts: int=None):  # noqa: E501
+    def __init__(self,
+                 network_id: int = None,
+                 network_name: str = None,
+                 factory_count: int = None,
+                 job_count: int = None,
+                 total_payouts: int = None):  # noqa: E501
         """NetworkStatsResponse - a model defined in Swagger
 
         :param network_id: The network_id of this NetworkStatsResponse.  # noqa: E501

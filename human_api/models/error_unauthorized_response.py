@@ -14,19 +14,15 @@ class ErrorUnauthorizedResponse(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, error: str=None):  # noqa: E501
+    def __init__(self, error: str = None):  # noqa: E501
         """ErrorUnauthorizedResponse - a model defined in Swagger
 
         :param error: The error of this ErrorUnauthorizedResponse.  # noqa: E501
         :type error: str
         """
-        self.swagger_types = {
-            'error': str
-        }
+        self.swagger_types = {'error': str}
 
-        self.attribute_map = {
-            'error': 'error'
-        }
+        self.attribute_map = {'error': 'error'}
         self._error = error
 
     @classmethod

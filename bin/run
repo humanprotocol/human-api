@@ -1,0 +1,21 @@
+#!/bin/bash
+set -exu
+
+./bin/stop
+
+docker-compose build
+docker-compose run --no-deps -e CI=true human-api ./bin/lint
+docker-compose up -d
+
+for i in {1..400}; do
+    if curl http://localhost:8080/ui; then
+        python -m webbrowser "http://localhost:8080/ui"
+        exit
+    else
+        echo "Waiting for the services to start..."
+        sleep 3
+        continue
+    fi
+done
+
+echo "Service did not start."

@@ -14,19 +14,15 @@ class JobListResponse(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, jobs: List[str]=None):  # noqa: E501
+    def __init__(self, jobs: List[str] = None):  # noqa: E501
         """JobListResponse - a model defined in Swagger
 
         :param jobs: The jobs of this JobListResponse.  # noqa: E501
         :type jobs: List[str]
         """
-        self.swagger_types = {
-            'jobs': List[str]
-        }
+        self.swagger_types = {'jobs': List[str]}
 
-        self.attribute_map = {
-            'jobs': 'jobs'
-        }
+        self.attribute_map = {'jobs': 'jobs'}
         self._jobs = jobs
 
     @classmethod

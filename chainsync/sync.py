@@ -21,7 +21,6 @@ from hmt_escrow.eth_bridge import get_escrow
 
 from hmt_escrow.storage import download
 
-
 from chainsync.config import CONTRACT_URLS, ETH_SERVER, HMTOKEN_ADDR, GAS_PAYER, FACTORY_ADDR, EXCHANGE_URI, REQUESTER_PRIV
 
 from contracts.interface import ContractsInterface
@@ -30,24 +29,26 @@ from contracts.interface import ContractsInterface
 LOGGER = logging.getLogger("ChainSync")
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "DEBUG"))
 
+
 def _setup_web3():
     provider = WebsocketProvider(ETH_SERVER)
     w3 = Web3(provider)
     w3.middleware_onion.inject(geth_poa_middleware, layer=0)
     return w3
 
+
 class Synchroniser():
     def __init__(self):
         self.w3 = _setup_web3()
         self.contracts_interface = ContractsInterface(CONTRACT_URLS)
-        self.launched_api = find_matching_event_abi(self.contracts_interface.get_abi('EscrowFactory'), 'Launched', ['eip20', 'escrow'])
+        self.launched_api = find_matching_event_abi(
+            self.contracts_interface.get_abi('EscrowFactory'), 'Launched', ['eip20', 'escrow'])
         self.launched_addrs = dict()
         self.factory_addr = Web3.toChecksumAddress(FACTORY_ADDR)
         self.hmtoken_addr = Web3.toChecksumAddress(HMTOKEN_ADDR)
         self.gas_payer = Web3.toChecksumAddress(GAS_PAYER)
         self.requester_priv = REQUESTER_PRIV
         self.exchange_uri = EXCHANGE_URI
-
 
     def _get_new_launched_addr(self, filter_params):
         LOGGER.info("Started Synchronisation: {}".format(filter_params))
@@ -65,9 +66,8 @@ class Synchroniser():
                         self.launched_addrs[escrow_addr] = tx_hash
                         LOGGER.info(f"New HMT escrow spotted at: {str(tx_hash)}")
             except Exception as e:
-                LOGGER.error(f"Interrupted getting all new addresses: {e}")      
+                LOGGER.error(f"Interrupted getting all new addresses: {e}")
         return list(self.launched_addrs.items())
-
 
     def _add_job_to_runner(self, addr, tx_hash):
         if not addr:
@@ -83,7 +83,7 @@ class Synchroniser():
         status_ = status(escrow_contract, self.gas_payer)
         LOGGER.debug(f"url: {url_}, hash: {hash_}, status: {status_}")
 
-        if(status_ == Status.Pending and hash_ != '' and url_ != ''):
+        if (status_ == Status.Pending and hash_ != '' and url_ != ''):
             manifest = download(url_, self.requester_priv)
             manifest_bytes = json.dumps(manifest, sort_keys=True, ensure_ascii=True)
             calculated_hash = hashlib.sha1(manifest_bytes.encode('utf-8')).hexdigest()
@@ -100,7 +100,7 @@ class Synchroniser():
             manifest['manifest_smart_bounty_addr'] = escrow_addr
             manifest['hmtoken_addr'] = self.hmtoken_addr
             # user_api_key = manifest["job_api_key"]
-            
+
             res = requests.post(f"{self.exchange_uri}/escrow-job", json=payload)
 
             if res.status_code == 208:
@@ -115,18 +115,15 @@ class Synchroniser():
                 raise Exception(f"Add job failed: {res}")
             return True
 
-
-    
     def run(self):
-        filter_params = {'fromBlock':0, 'toBlock': 'latest', 'address': [self.factory_addr]}
+        filter_params = {'fromBlock': 0, 'toBlock': 'latest', 'address': [self.factory_addr]}
         LOGGER.info("Synchronisation Server Started")
         try:
             for escrow_addr, tx_hash in self._get_new_launched_addr(filter_params):
                 self._add_job_to_runner(escrow_addr, tx_hash)
         except Exception as e:
             LOGGER.error(f"Unable to synchronize: {e}")
-            raise(e)
-    
+            raise (e)
 
 
 if __name__ == '__main__':
@@ -139,4 +136,3 @@ if __name__ == '__main__':
             sys.exit(1)
         finally:
             time.sleep(15)
-

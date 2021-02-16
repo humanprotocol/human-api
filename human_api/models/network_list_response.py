@@ -15,19 +15,15 @@ class NetworkListResponse(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, networks: List[NetworkListResponseNetworks]=None):  # noqa: E501
+    def __init__(self, networks: List[NetworkListResponseNetworks] = None):  # noqa: E501
         """NetworkListResponse - a model defined in Swagger
 
         :param networks: The networks of this NetworkListResponse.  # noqa: E501
         :type networks: List[NetworkListResponseNetworks]
         """
-        self.swagger_types = {
-            'networks': List[NetworkListResponseNetworks]
-        }
+        self.swagger_types = {'networks': List[NetworkListResponseNetworks]}
 
-        self.attribute_map = {
-            'networks': 'networks'
-        }
+        self.attribute_map = {'networks': 'networks'}
         self._networks = networks
 
     @classmethod

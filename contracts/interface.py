@@ -9,6 +9,7 @@ from contracts.downloader import download_multiple_files
 LOGGER = logging.getLogger("Contracts:Interface")
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 
+
 class ContractsInterface():
     """
     Class that provides interface to compiled contracts
@@ -20,12 +21,11 @@ class ContractsInterface():
 
         self._initialise()
 
-
     def _initialise(self):
         """
         Compiles the contracts or reads from file if cache exists
         """
-        if(os.path.exists(self._output_file_path)):
+        if (os.path.exists(self._output_file_path)):
             LOGGER.info("Contracts Cache exits, reading from that.")
             with open(self._output_file_path) as f:
                 self._compiled_contracts = json.load(f)
@@ -43,7 +43,7 @@ class ContractsInterface():
                 "sources": solc_compile_source,
                 "settings": {
                     "outputSelection": {
-                        "*" : {
+                        "*": {
                             "*": ['*']
                         }
                     }
@@ -54,18 +54,18 @@ class ContractsInterface():
             os.mkdir(cache_path)
             with open(self._output_file_path, 'w+') as f:
                 f.write(json.dumps(self._compiled_contracts))
-        
 
     def get_interface(self, contract_name):
         return self._compiled_contracts['contracts']['{}.sol'.format(contract_name)][contract_name]
 
-
     def get_abi(self, contract_name):
-        return self._compiled_contracts['contracts']['{}.sol'.format(contract_name)][contract_name]['abi']
+        return self._compiled_contracts['contracts']['{}.sol'.format(
+            contract_name)][contract_name]['abi']
 
     def get_bytecode(self, contract_name):
-        return self._compiled_contracts['contracts']['{}.sol'.format(contract_name)][contract_name]['evm']['bytecode']['object']
-        
+        return self._compiled_contracts['contracts']['{}.sol'.format(
+            contract_name)][contract_name]['evm']['bytecode']['object']
+
     def get_contract(self, w3, contract_name, addr):
         return w3.eth.contract(
             address=ChecksumAddress(HexAddress(HexStr(addr))),

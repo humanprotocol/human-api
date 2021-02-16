@@ -14,19 +14,15 @@ class IntDataResponse(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, data: int=None):  # noqa: E501
+    def __init__(self, data: int = None):  # noqa: E501
         """IntDataResponse - a model defined in Swagger
 
         :param data: The data of this IntDataResponse.  # noqa: E501
         :type data: int
         """
-        self.swagger_types = {
-            'data': int
-        }
+        self.swagger_types = {'data': int}
 
-        self.attribute_map = {
-            'data': 'data'
-        }
+        self.attribute_map = {'data': 'data'}
         self._data = data
 
     @classmethod
