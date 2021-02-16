@@ -247,7 +247,7 @@ python-versions = "*"
 
 [[package]]
 name = "boto3"
-version = "1.17.7"
+version = "1.17.8"
 description = "The AWS SDK for Python"
 category = "main"
 optional = false
@@ -255,12 +255,12 @@ python-versions = ">= 2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*"
 
 [package.dependencies]
 jmespath = ">=0.7.1,<1.0.0"
-botocore = ">=1.20.7,<1.21.0"
+botocore = ">=1.20.8,<1.21.0"
 s3transfer = ">=0.3.0,<0.4.0"
 
 [[package]]
 name = "botocore"
-version = "1.20.7"
+version = "1.20.8"
 description = "Low-level, data-driven core of boto 3."
 category = "main"
 optional = false
@@ -750,7 +750,7 @@ marshmallow = ">=3.2.1"
 
 [[package]]
 name = "hmt-escrow"
-version = "0.8.11"
+version = "0.8.9"
 description = "A python library to launch escrow contracts to the HUMAN network."
 category = "main"
 optional = false
@@ -2250,7 +2250,7 @@ testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7.2"
-content-hash = "314c8442a08403e6a466a6f6ecc11706f8ba27d6d060e127e23651b5dc7b0193"
+content-hash = "e725e01c6d6adc381c5d94ddce7eccdc95d69cb75126bc0624a9a4def3bb3234"
 
 [metadata.files]
 aiohttp = [
@@ -2360,12 +2360,12 @@ bloom-filter = [
     {file = "bloom_filter-1.3.tar.gz", hash = "sha256:b5ccc303c61dacff7e29c653d0a81670adb0f7fa79ba4e76b447c795eb2b1c85"},
 ]
 boto3 = [
-    {file = "boto3-1.17.7-py2.py3-none-any.whl", hash = "sha256:8ecc9c8c13355a2ae0446a227d67bf011affba4cab644240a3dc6ca23978e583"},
-    {file = "boto3-1.17.7.tar.gz", hash = "sha256:56fad4485ef79bee64ad0d913c19e41b838a1cd6aefc935afefd7f393a0f0169"},
+    {file = "boto3-1.17.8-py2.py3-none-any.whl", hash = "sha256:c294eb103db0ab6c55a53f68cc87761ff7e564733e7b23e51dac475a18c0a12b"},
+    {file = "boto3-1.17.8.tar.gz", hash = "sha256:819890e92268d730bdef1d8bac08fb069b148bec21f2172a1a99380798224e1b"},
 ]
 botocore = [
-    {file = "botocore-1.20.7-py2.py3-none-any.whl", hash = "sha256:77e34194eb4f916d9caaf4b518a8b5d73ddbba87bf951cdb20141a6fafc9ccbe"},
-    {file = "botocore-1.20.7.tar.gz", hash = "sha256:27ea4a11f5cca9d655cb9ba462ad4a2bb28eb44d061b49e15a3239c040298ed2"},
+    {file = "botocore-1.20.8-py2.py3-none-any.whl", hash = "sha256:65e2fb81f941dfefa8cc3ef72d46a62d4b6219b8eb6550062b644b36935f6e4f"},
+    {file = "botocore-1.20.8.tar.gz", hash = "sha256:cd621cdd14a81d2c3c5276516066d9e6ea20a515cf3113a80ad74f3f8b04a093"},
 ]
 cached-property = [
     {file = "cached-property-1.5.2.tar.gz", hash = "sha256:9fa5755838eecbb2d234c3aa390bd80fbd3ac6b6869109bfc1b499f7bd89a130"},
@@ -2631,7 +2631,7 @@ hmt-basemodels = [
     {file = "hmt-basemodels-0.0.23.tar.gz", hash = "sha256:ef30c479a7f77db39412446b27350658d3d6cd2509752f0494f51c8235fd1a5d"},
 ]
 hmt-escrow = [
-    {file = "hmt-escrow-0.8.11.tar.gz", hash = "sha256:14a473835ab75219b146d6dbda5135af32e53985111377c719f1d94367d04d40"},
+    {file = "hmt-escrow-0.8.9.tar.gz", hash = "sha256:471f185b47c4a5ce6e1c5155da75b03d67018c8e01ac6a7aa700c66d437fffff"},
 ]
 idna = [
     {file = "idna-2.10-py2.py3-none-any.whl", hash = "sha256:b97d804b1e9b523befed77c48dacec60e6dcb0b5391d57af6a65a312a90648c0"},
