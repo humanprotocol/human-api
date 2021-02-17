@@ -66,11 +66,11 @@ def get_factory(address, gas_payer, gas_payer_private, network_key=None):  # noq
             return JobListResponse(escrows), 200
         except ValueError as e:
             return ErrorParameterResponse(e, "address"), 400
-        except LookupError as e:
+        except Exception as e:
             return ErrorNotexistResponse(e), 404
     else:
         # TODO: Other blockchains
-        return ErrorParameterResponse("This chain is not yet supported", network_key), 400
+        return ErrorParameterResponse("This chain is not yet supported", "network_key"), 400
 
 
 def new_factory(body=None):  # noqa: E501
