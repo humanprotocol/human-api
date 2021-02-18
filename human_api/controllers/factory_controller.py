@@ -89,14 +89,14 @@ def get_factory(address, gas_payer, gas_payer_private, network_key=None):  # noq
             factory_launch = _binary_launch_search(w3, address, 0, w3.eth.blockNumber)
             factory = w3.eth.contract(address=address, abi=contract_interface["abi"])
             escrows = []
-            for event in factory.events.Launched.create_filter(
-                    from_block=factory_launch).get_all_entries():
+            for event in factory.events.Launched.createFilter(
+                    fromBlock=factory_launch).get_all_entries():
                 escrows.append(event.get("args", {}).get("escrow", ""))
             return JobListResponse(escrows), 200
         except ValueError as e:
-            return ErrorParameterResponse(e, "address"), 400
+            return ErrorParameterResponse(str(e), "address"), 400
         except Exception as e:
-            return ErrorNotexistResponse(e), 404
+            return ErrorNotexistResponse(str(e)), 404
     else:
         # TODO: Other blockchains
         return ErrorParameterResponse("This chain is not yet supported", "network_key"), 400
@@ -114,12 +114,12 @@ def new_factory(body=None):  # noqa: E501
     """
     if connexion.request.is_json:
         body = FactoryCreateBody.from_dict(connexion.request.get_json())  # noqa: E501
-        if body.network_id() == 0:
+        if body.network_id == 0:
             try:
                 return StringDataResponse(
-                    deploy_factory(gas_payer=body.gas_payer(),
-                                   gas_payer_priv=body.gas_payer_private())), 200
+                    deploy_factory(gas_payer=body.gas_payer,
+                                   gas_payer_priv=body.gas_payer_private)), 200
             except Exception as e:
-                return ErrorNotcreateResponse(e), 500
+                return ErrorNotcreateResponse(str(e)), 500
         else:
             return ErrorParameterResponse("This chain is not yet supported", "network_id"), 400

@@ -21,7 +21,7 @@ RUN mkdir -p $CONTRACT_FOLDER
 RUN wget -qO- -O tmp.gz https://files.pythonhosted.org/packages/76/65/8eafc1322f1699bd07e39c74bc05c91b9ed4509b9de82be9fbc301f0c90b/hmt-escrow-0.8.9.tar.gz \
  && tar -xzvf tmp.gz \
  && rm tmp.gz \
- && cp -r /work/hmt-escrow-0.8.9/contracts $CONTRACT_FOLDER \
+ && cp -r /work/hmt-escrow-0.8.9/contracts/* $CONTRACT_FOLDER \
  && rm -rf /work/hmt-escrow-0.8.9
 
 COPY . .
