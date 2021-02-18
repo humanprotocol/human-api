@@ -15,10 +15,7 @@ from human_api.models.job_list_response import JobListResponse  # noqa: E501
 from human_api.models.string_data_response import StringDataResponse  # noqa: E501
 from human_api.test import BaseTestCase
 from hmt_escrow.eth_bridge import deploy_factory
-
-GAS_PAYER = os.getenv("GAS_PAYER")
-GAS_PAYER_PRIV = os.getenv("GAS_PAYER_PRIV")
-FACTORY_ADDRESS = os.getenv("FACTORY_ADDRESS")
+from human_api.test.config import FACTORY_ADDRESS, GAS_PAYER, GAS_PAYER_PRIV
 
 
 class TestFactoryController(BaseTestCase):

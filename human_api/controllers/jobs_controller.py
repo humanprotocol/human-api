@@ -266,21 +266,21 @@ def new_job(body=None):  # noqa: E501
     """
     if connexion.request.is_json:
         body = JobCreateBody.from_dict(connexion.request.get_json())  # noqa: E501
-    if body.network_key() == 0:  # Ethereum Rinkeby
+    if body.network_id == 0:  # Ethereum Rinkeby
         try:
             job = Job({
-                "gas_payer": body.gas_payer(),
-                "gas_payer_priv": body.gas_payer_private()
-            }, Manifest(**(download(body.manifest_url(), body.gas_payer_private()))),
-                      body.factory_address())
+                "gas_payer": body.gas_payer,
+                "gas_payer_priv": body.gas_payer_private
+            }, Manifest(**(download(body.manifest_url, body.gas_payer_private))),
+                      body.factory_address)
         except Exception as e:
             return ErrorParameterResponse(str(e), "manifest_url or gas_payer_private"), 401
         try:
-            job.launch(bytes(body.rep_oracle_pub()))
+            job.launch(bytes(body.rep_oracle_pub, encoding='utf-8'))
             job.setup()
             return StringDataResponse(job.job_contract.address), 200
         except Exception as e:
             return ErrorParameterResponse(str(e), "rep_oracle_pub_key"), 401
     else:
         # TODO: Other blockchains
-        return ErrorParameterResponse("This chain is not yet supported", "network_key"), 401
+        return ErrorParameterResponse("This chain is not yet supported", "network_id"), 401
