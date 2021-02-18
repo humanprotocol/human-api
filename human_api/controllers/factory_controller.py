@@ -1,5 +1,6 @@
 import connexion
 import six
+import os
 
 from human_api.models.error_notcreate_response import ErrorNotcreateResponse  # noqa: E501
 from human_api.models.error_notexist_response import ErrorNotexistResponse  # noqa: E501
@@ -9,6 +10,9 @@ from human_api.models.job_list_response import JobListResponse  # noqa: E501
 from human_api.models.string_data_response import StringDataResponse  # noqa: E501
 from human_api import util
 from hmt_escrow.eth_bridge import get_factory as eth_bridge_factory, deploy_factory, get_w3
+from web3 import Web3
+from web3.middleware import geth_poa_middleware
+from solcx import compile_files
 
 
 # This will find the launch block number of any contract
@@ -56,9 +60,34 @@ def get_factory(address, gas_payer, gas_payer_private, network_key=None):  # noq
     """
     if network_key == 0:  # Ethereum Rinkeby
         try:
-            w3 = get_w3()
+            HMT_ETH_SERVER = os.getenv("HMT_ETH_SERVER")
+            # If connected to Rinkeby on Infura
+            INFURA_PID = HMT_ETH_SERVER.split("rinkeby.infura.io/v3/", 1)[1]
+            w3 = Web3(Web3.WebsocketProvider(f"wss://rinkeby.infura.io/ws/v3/{INFURA_PID}"))
+        except IndexError:
+            # If connected to local ganache
+            GANACHE_PID = HMT_ETH_SERVER.split("http://", 1)[1]
+            w3 = Web3(Web3.WebsocketProvider(f"ws://{GANACHE_PID}"))
+
+        # Required for the Rinkeby testnet
+        w3.middleware_onion.inject(geth_poa_middleware, layer=0)
+
+        CONTRACT_FOLDER = os.getenv("CONTRACT_FOLDER")
+
+        CONTRACTS = compile_files([
+            "{}/Escrow.sol".format(CONTRACT_FOLDER),
+            "{}/EscrowFactory.sol".format(CONTRACT_FOLDER),
+            "{}/HMToken.sol".format(CONTRACT_FOLDER),
+            "{}/HMTokenInterface.sol".format(CONTRACT_FOLDER),
+            "{}/SafeMath.sol".format(CONTRACT_FOLDER),
+        ])
+
+        contract_interface = CONTRACTS["{}/EscrowFactory.sol:EscrowFactory".format(
+            CONTRACT_FOLDER)]
+
+        try:
             factory_launch = _binary_launch_search(w3, address, 0, w3.eth.blockNumber)
-            factory = eth_bridge_factory(address)
+            factory = w3.eth.contract(address=address, abi=contract_interface["abi"])
             escrows = []
             for event in factory.events.Launched.create_filter(
                     from_block=factory_launch).get_all_entries():
@@ -88,10 +117,8 @@ def new_factory(body=None):  # noqa: E501
         if body.network_id() == 0:
             try:
                 return StringDataResponse(
-                    deploy_factory({
-                        "gas_payer": body.gas_payer(),
-                        "gas_payer_priv": body.gas_payer_private()
-                    })), 200
+                    deploy_factory(gas_payer=body.gas_payer(),
+                                   gas_payer_priv=body.gas_payer_private())), 200
             except Exception as e:
                 return ErrorNotcreateResponse(e), 500
         else:

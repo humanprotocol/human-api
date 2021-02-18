@@ -3,8 +3,6 @@ set -exu
 
 ./bin/stop
 
-docker-compose build
-docker-compose run --no-deps -e CI=true human-api ./bin/lint
 docker-compose up -d
 
 for i in {1..400}; do

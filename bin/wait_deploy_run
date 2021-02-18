@@ -1,0 +1,20 @@
+#!/bin/bash
+set -exu
+
+HMTOKEN_ADDR_FILE=/deployed-hmtoken/hmt.address.json
+
+until test -f $HMTOKEN_ADDR_FILE; do
+  echo "waiting for hmt token file at $HMTOKEN_ADDR_FILE .."
+  sleep 2
+done
+
+export HMTOKEN_ADDR=$(cat $HMTOKEN_ADDR_FILE | jq --raw-output '.address')
+export PYTHONPATH=$(pwd)
+export FACTORY_ADDRESS=$(python3 ./bin/factory_deployed.py)
+
+export GAS_PAYER=${GAS_PAYER:-"0x1413862C2B7054CDbfdc181B83962CB0FC11fD92"}
+export GAS_PAYER_PRIV=${GAS_PAYER_PRIV:-"0x28e516f1e2f99e96a48a23cea1f94ee5f073403a1c68e818263f0eb898f1c8e5"}
+export CONTRACT_FOLDER=${CONTRACT_FOLDER:-"/usr/local/lib/python3.8/dist-packages/contracts"}
+export HMT_ETH_SERVER=${HMT_ETH_SERVER:-"http://ganache:8545"}
+
+HMTOKEN_ADDR=$HMTOKEN_ADDR PYTHONPATH=$PYTHONPATH FACTORY_ADDRESS=$FACTORY_ADDRESS GAS_PAYER=$GAS_PAYER GAS_PAYER_PRIV=$GAS_PAYER_PRIV CONTRACT_FOLDER=$CONTRACT_FOLDER HMT_ETH_SERVER=$HMT_ETH_SERVER tox
