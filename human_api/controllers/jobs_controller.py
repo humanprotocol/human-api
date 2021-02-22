@@ -41,10 +41,13 @@ def abort_job(address, gas_payer, gas_payer_private, network_key=None):  # noqa:
         except Exception as e:
             return ErrorNotexistResponse(str(e)), 404
         try:
-            job = Job({
+            job = Job(credentials={
                 "gas_payer": gas_payer,
-                "gas_payer_priv": gas_payer_private
-            }, factory_addr, address)
+                "gas_payer_priv": gas_payer_private,
+                "rep_oracle_priv_key": bytes(gas_payer_private.lstrip("0x"), encoding="utf-8")
+            },
+                      factory_addr=factory_addr,
+                      escrow_addr=address)
             return BoolDataResponse(job.abort()), 200
         except Exception as e:
             return ErrorUnauthorizedResponse(str(e)), 401
@@ -75,10 +78,13 @@ def cancel_job(address, gas_payer, gas_payer_private, network_key=None):  # noqa
         except Exception as e:
             return ErrorNotexistResponse(str(e)), 404
         try:
-            job = Job({
+            job = Job(credentials={
                 "gas_payer": gas_payer,
-                "gas_payer_priv": gas_payer_private
-            }, factory_addr, address)
+                "gas_payer_priv": gas_payer_private,
+                "rep_oracle_priv_key": bytes(gas_payer_private.lstrip("0x"), encoding="utf-8")
+            },
+                      factory_addr=factory_addr,
+                      escrow_addr=address)
             return BoolDataResponse(job.cancel()), 200
         except Exception as e:
             return ErrorUnauthorizedResponse(str(e)), 401
@@ -109,10 +115,13 @@ def complete_job(address, gas_payer, gas_payer_private, network_key=None):  # no
         except Exception as e:
             return ErrorNotexistResponse(str(e)), 404
         try:
-            job = Job({
+            job = Job(credentials={
                 "gas_payer": gas_payer,
-                "gas_payer_priv": gas_payer_private
-            }, factory_addr, address)
+                "gas_payer_priv": gas_payer_private,
+                "rep_oracle_priv_key": bytes(gas_payer_private.lstrip("0x"), encoding="utf-8")
+            },
+                      factory_addr=factory_addr,
+                      escrow_addr=address)
             return BoolDataResponse(job.complete()), 200
         except Exception as e:
             return ErrorUnauthorizedResponse(str(e)), 401
@@ -140,10 +149,13 @@ def get_job_balanace(address, gas_payer, gas_payer_private, network_key=None):  
     if network_key == 0:  # Ethereum Rinkeby
         try:
             factory_addr = launcher(get_escrow(address), gas_payer)
-            job = Job({
+            job = Job(credentials={
                 "gas_payer": gas_payer,
-                "gas_payer_priv": gas_payer_private
-            }, factory_addr, address)
+                "gas_payer_priv": gas_payer_private,
+                "rep_oracle_priv_key": bytes(gas_payer_private.lstrip("0x"), encoding="utf-8")
+            },
+                      factory_addr=factory_addr,
+                      escrow_addr=address)
             return IntDataResponse(job.balance()), 200
         except Exception as e:
             return ErrorNotexistResponse(str(e)), 404

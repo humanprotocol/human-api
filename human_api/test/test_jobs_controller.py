@@ -33,6 +33,7 @@ class TestJobsController(BaseTestCase):
             "gas_payer_priv": GAS_PAYER_PRIV
         }, manifest, FACTORY_ADDRESS)
         job.launch(REP_ORACLE_PUB_KEY)
+        job.setup()
         query_string = [('address', job.job_contract.address), ('gasPayer', GAS_PAYER),
                         ('gasPayerPrivate', GAS_PAYER_PRIV), ('networkKey', 0)]
         response = self.client.open('/job/abort', method='GET', query_string=query_string)
