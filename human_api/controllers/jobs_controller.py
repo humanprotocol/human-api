@@ -1,6 +1,8 @@
 import connexion
 import six
+import json
 
+from urllib.request import Request, urlopen
 from human_api.models.bool_data_response import BoolDataResponse  # noqa: E501
 from human_api.models.error_notcreate_response import ErrorNotcreateResponse  # noqa: E501
 from human_api.models.error_notexist_response import ErrorNotexistResponse  # noqa: E501
@@ -10,7 +12,7 @@ from human_api.models.int_data_response import IntDataResponse  # noqa: E501
 from human_api.models.job_create_body import JobCreateBody  # noqa: E501
 from human_api.models.job_status_response import JobStatusResponse  # noqa: E501
 from human_api.models.string_data_response import StringDataResponse  # noqa: E501
-from human_api import util
+from human_api.util import LOGGER
 from hmt_escrow.storage import download
 from hmt_escrow.eth_bridge import get_escrow
 from hmt_escrow.job import Job, launcher, manifest_hash, manifest_url, status
@@ -268,15 +270,22 @@ def new_job(body=None):  # noqa: E501
         body = JobCreateBody.from_dict(connexion.request.get_json())  # noqa: E501
     if body.network_id == 0:  # Ethereum Rinkeby
         try:
+            req = Request(body.manifest_url)
+            req.add_header(
+                "User-Agent",
+                "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.75 Safari/537.36"
+            )
+            req.add_header("X-Requested-With", "XMLHttpRequest")
+            data = urlopen(req).read()
+            manifest = json.loads(data)
             job = Job({
                 "gas_payer": body.gas_payer,
                 "gas_payer_priv": body.gas_payer_private
-            }, Manifest(**(download(body.manifest_url, body.gas_payer_private))),
-                      body.factory_address)
+            }, Manifest(manifest))
         except Exception as e:
             return ErrorParameterResponse(str(e), "manifest_url or gas_payer_private"), 401
         try:
-            job.launch(bytes(body.rep_oracle_pub, encoding='utf-8'))
+            job.launch(bytes(body.rep_oracle_pub, encoding="utf-8"))
             job.setup()
             return StringDataResponse(job.job_contract.address), 200
         except Exception as e:

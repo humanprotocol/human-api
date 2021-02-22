@@ -2,6 +2,11 @@ import datetime
 
 import six
 import typing
+import logging
+
+# Setup Logging
+LOGGER = logging.getLogger("human-api")
+logging.basicConfig(level="INFO")
 
 
 def _deserialize(data, klass):

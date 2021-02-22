@@ -16,6 +16,7 @@ from human_api.models.job_status_response import JobStatusResponse  # noqa: E501
 from human_api.models.string_data_response import StringDataResponse  # noqa: E501
 from human_api.test import BaseTestCase
 from human_api.test.config import FACTORY_ADDRESS, GAS_PAYER, GAS_PAYER_PRIV, REP_ORACLE_PUB_KEY
+from human_api.test.helpers import test_model
 from hmt_escrow.test_manifest import manifest
 from hmt_escrow.job import Job, manifest_url
 
@@ -31,7 +32,7 @@ class TestJobsController(BaseTestCase):
             "gas_payer": GAS_PAYER,
             "gas_payer_priv": GAS_PAYER_PRIV
         }, manifest, FACTORY_ADDRESS)
-        job.launch(bytes(REP_ORACLE_PUB_KEY, encoding='utf-8'))
+        job.launch(REP_ORACLE_PUB_KEY)
         query_string = [('address', job.job_contract.address), ('gasPayer', GAS_PAYER),
                         ('gasPayerPrivate', GAS_PAYER_PRIV), ('networkKey', 0)]
         response = self.client.open('/job/abort', method='GET', query_string=query_string)
@@ -46,7 +47,7 @@ class TestJobsController(BaseTestCase):
             "gas_payer": GAS_PAYER,
             "gas_payer_priv": GAS_PAYER_PRIV
         }, manifest, FACTORY_ADDRESS)
-        job.launch(bytes(REP_ORACLE_PUB_KEY, encoding='utf-8'))
+        job.launch(REP_ORACLE_PUB_KEY)
         job.setup()
         query_string = [('address', job.job_contract.address), ('gasPayer', GAS_PAYER),
                         ('gasPayerPrivate', GAS_PAYER_PRIV), ('networkKey', 0)]
@@ -73,7 +74,7 @@ class TestJobsController(BaseTestCase):
             "gas_payer": GAS_PAYER,
             "gas_payer_priv": GAS_PAYER_PRIV
         }, manifest, FACTORY_ADDRESS)
-        job.launch(bytes(REP_ORACLE_PUB_KEY, encoding='utf-8'))
+        job.launch(REP_ORACLE_PUB_KEY)
         job.setup()
         query_string = [('address', job.job_contract.address), ('gasPayer', GAS_PAYER),
                         ('gasPayerPrivate', GAS_PAYER_PRIV), ('networkKey', 0)]
@@ -89,7 +90,7 @@ class TestJobsController(BaseTestCase):
             "gas_payer": GAS_PAYER,
             "gas_payer_priv": GAS_PAYER_PRIV
         }, manifest, FACTORY_ADDRESS)
-        job.launch(bytes(REP_ORACLE_PUB_KEY, encoding='utf-8'))
+        job.launch(REP_ORACLE_PUB_KEY)
         query_string = [('address', job.job_contract.address), ('gasPayer', GAS_PAYER),
                         ('gasPayerPrivate', GAS_PAYER_PRIV), ('networkKey', 0)]
         response = self.client.open('/job/launcher', method='GET', query_string=query_string)
@@ -104,7 +105,7 @@ class TestJobsController(BaseTestCase):
             "gas_payer": GAS_PAYER,
             "gas_payer_priv": GAS_PAYER_PRIV
         }, manifest, FACTORY_ADDRESS)
-        job.launch(bytes(REP_ORACLE_PUB_KEY, encoding='utf-8'))
+        job.launch(REP_ORACLE_PUB_KEY)
         query_string = [('address', job.job_contract.address), ('gasPayer', GAS_PAYER),
                         ('gasPayerPrivate', GAS_PAYER_PRIV), ('networkKey', 0)]
         response = self.client.open('/job/manifestHash', method='GET', query_string=query_string)
@@ -119,7 +120,7 @@ class TestJobsController(BaseTestCase):
             "gas_payer": GAS_PAYER,
             "gas_payer_priv": GAS_PAYER_PRIV
         }, manifest, FACTORY_ADDRESS)
-        job.launch(bytes(REP_ORACLE_PUB_KEY, encoding='utf-8'))
+        job.launch(REP_ORACLE_PUB_KEY)
         query_string = [('address', job.job_contract.address), ('gasPayer', GAS_PAYER),
                         ('gasPayerPrivate', GAS_PAYER_PRIV), ('networkKey', 0)]
         response = self.client.open('/job/manifestUrl', method='GET', query_string=query_string)
@@ -134,7 +135,7 @@ class TestJobsController(BaseTestCase):
             "gas_payer": GAS_PAYER,
             "gas_payer_priv": GAS_PAYER_PRIV
         }, manifest, FACTORY_ADDRESS)
-        job.launch(bytes(REP_ORACLE_PUB_KEY, encoding='utf-8'))
+        job.launch(REP_ORACLE_PUB_KEY)
         query_string = [('address', job.job_contract.address), ('gasPayer', GAS_PAYER),
                         ('gasPayerPrivate', GAS_PAYER_PRIV), ('networkKey', 0)]
         response = self.client.open('/job/status', method='GET', query_string=query_string)
@@ -145,13 +146,12 @@ class TestJobsController(BaseTestCase):
 
         Creates a new Job and returns the address
         """
-        job = Job({
-            "gas_payer": GAS_PAYER,
-            "gas_payer_priv": GAS_PAYER_PRIV
-        }, manifest, FACTORY_ADDRESS)
-        job.launch(bytes(REP_ORACLE_PUB_KEY, encoding='utf-8'))
-        body = JobCreateBody(GAS_PAYER, GAS_PAYER_PRIV, FACTORY_ADDRESS, REP_ORACLE_PUB_KEY,
-                             manifest_url(job.job_contract, GAS_PAYER))
+        MANIFEST_PATH = "/work/human_api/test/dumps/test_manifest_file"
+        with open(f"{MANIFEST_PATH}", "w") as test_manifest_file:
+            test_manifest_file.write(json.dumps(test_model()))
+        manifest_url = f"file://{MANIFEST_PATH}"
+        body = JobCreateBody(GAS_PAYER, GAS_PAYER_PRIV, FACTORY_ADDRESS,
+                             REP_ORACLE_PUB_KEY.decode("utf-8"), manifest_url)
         response = self.client.open('/job',
                                     method='POST',
                                     data=json.dumps(body),
