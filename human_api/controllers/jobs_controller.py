@@ -1,6 +1,8 @@
 import connexion
 import six
+import json
 
+from urllib.request import Request, urlopen
 from human_api.models.bool_data_response import BoolDataResponse  # noqa: E501
 from human_api.models.error_notcreate_response import ErrorNotcreateResponse  # noqa: E501
 from human_api.models.error_notexist_response import ErrorNotexistResponse  # noqa: E501
@@ -10,7 +12,7 @@ from human_api.models.int_data_response import IntDataResponse  # noqa: E501
 from human_api.models.job_create_body import JobCreateBody  # noqa: E501
 from human_api.models.job_status_response import JobStatusResponse  # noqa: E501
 from human_api.models.string_data_response import StringDataResponse  # noqa: E501
-from human_api import util
+from human_api.util import LOGGER
 from hmt_escrow.storage import download
 from hmt_escrow.eth_bridge import get_escrow
 from hmt_escrow.job import Job, launcher, manifest_hash, manifest_url, status
@@ -37,15 +39,18 @@ def abort_job(address, gas_payer, gas_payer_private, network_key=None):  # noqa:
         try:
             factory_addr = launcher(get_escrow(address), gas_payer)
         except Exception as e:
-            return ErrorNotexistResponse(e), 404
+            return ErrorNotexistResponse(str(e)), 404
         try:
-            job = Job({
+            job = Job(credentials={
                 "gas_payer": gas_payer,
-                "gas_payer_priv": gas_payer_private
-            }, factory_addr, address)
+                "gas_payer_priv": gas_payer_private,
+                "rep_oracle_priv_key": bytes(gas_payer_private.lstrip("0x"), encoding="utf-8")
+            },
+                      factory_addr=factory_addr,
+                      escrow_addr=address)
             return BoolDataResponse(job.abort()), 200
         except Exception as e:
-            return ErrorUnauthorizedResponse(e), 401
+            return ErrorUnauthorizedResponse(str(e)), 401
     else:
         # TODO: Other blockchains
         return ErrorParameterResponse("This chain is not yet supported", "network_key"), 400
@@ -71,15 +76,18 @@ def cancel_job(address, gas_payer, gas_payer_private, network_key=None):  # noqa
         try:
             factory_addr = launcher(get_escrow(address), gas_payer)
         except Exception as e:
-            return ErrorNotexistResponse(e), 404
+            return ErrorNotexistResponse(str(e)), 404
         try:
-            job = Job({
+            job = Job(credentials={
                 "gas_payer": gas_payer,
-                "gas_payer_priv": gas_payer_private
-            }, factory_addr, address)
+                "gas_payer_priv": gas_payer_private,
+                "rep_oracle_priv_key": bytes(gas_payer_private.lstrip("0x"), encoding="utf-8")
+            },
+                      factory_addr=factory_addr,
+                      escrow_addr=address)
             return BoolDataResponse(job.cancel()), 200
         except Exception as e:
-            return ErrorUnauthorizedResponse(e), 401
+            return ErrorUnauthorizedResponse(str(e)), 401
     else:
         # TODO: Other blockchains
         return ErrorParameterResponse("This chain is not yet supported", "network_key"), 400
@@ -105,15 +113,18 @@ def complete_job(address, gas_payer, gas_payer_private, network_key=None):  # no
         try:
             factory_addr = launcher(get_escrow(address), gas_payer)
         except Exception as e:
-            return ErrorNotexistResponse(e), 404
+            return ErrorNotexistResponse(str(e)), 404
         try:
-            job = Job({
+            job = Job(credentials={
                 "gas_payer": gas_payer,
-                "gas_payer_priv": gas_payer_private
-            }, factory_addr, address)
+                "gas_payer_priv": gas_payer_private,
+                "rep_oracle_priv_key": bytes(gas_payer_private.lstrip("0x"), encoding="utf-8")
+            },
+                      factory_addr=factory_addr,
+                      escrow_addr=address)
             return BoolDataResponse(job.complete()), 200
         except Exception as e:
-            return ErrorUnauthorizedResponse(e), 401
+            return ErrorUnauthorizedResponse(str(e)), 401
     else:
         # TODO: Other blockchains
         return ErrorParameterResponse("This chain is not yet supported", "network_key"), 400
@@ -138,13 +149,16 @@ def get_job_balanace(address, gas_payer, gas_payer_private, network_key=None):  
     if network_key == 0:  # Ethereum Rinkeby
         try:
             factory_addr = launcher(get_escrow(address), gas_payer)
-            job = Job({
+            job = Job(credentials={
                 "gas_payer": gas_payer,
-                "gas_payer_priv": gas_payer_private
-            }, factory_addr, address)
+                "gas_payer_priv": gas_payer_private,
+                "rep_oracle_priv_key": bytes(gas_payer_private.lstrip("0x"), encoding="utf-8")
+            },
+                      factory_addr=factory_addr,
+                      escrow_addr=address)
             return IntDataResponse(job.balance()), 200
         except Exception as e:
-            return ErrorNotexistResponse(e), 404
+            return ErrorNotexistResponse(str(e)), 404
     else:
         # TODO: Other blockchains
         return ErrorParameterResponse("This chain is not yet supported", "network_key"), 400
@@ -170,7 +184,7 @@ def get_job_launcher(address, gas_payer, gas_payer_private, network_key=None):  
         try:
             return StringDataResponse(launcher(get_escrow(address), gas_payer)), 200
         except Exception as e:
-            return ErrorNotexistResponse(e), 404
+            return ErrorNotexistResponse(str(e)), 404
     else:
         # TODO: Other blockchains
         return ErrorParameterResponse("This chain is not yet supported", "network_key"), 400
@@ -196,7 +210,7 @@ def get_job_manifest_hash(address, gas_payer, gas_payer_private, network_key=Non
         try:
             return StringDataResponse(manifest_hash(get_escrow(address), gas_payer)), 200
         except Exception as e:
-            return ErrorNotexistResponse(e), 404
+            return ErrorNotexistResponse(str(e)), 404
     else:
         # TODO: Other blockchains
         return ErrorParameterResponse("This chain is not yet supported", "network_key"), 400
@@ -222,7 +236,7 @@ def get_job_manifest_url(address, gas_payer, gas_payer_private, network_key=None
         try:
             return StringDataResponse(manifest_url(get_escrow(address), gas_payer)), 200
         except Exception as e:
-            return ErrorNotexistResponse(e), 404
+            return ErrorNotexistResponse(str(e)), 404
     else:
         # TODO: Other blockchains
         return ErrorParameterResponse("This chain is not yet supported", "network_key"), 400
@@ -248,7 +262,7 @@ def get_job_status(address, gas_payer, gas_payer_private, network_key=None):  # 
         try:
             return JobStatusResponse(str(status(get_escrow(address), gas_payer))), 200
         except Exception as e:
-            return ErrorNotexistResponse(e), 404
+            return ErrorNotexistResponse(str(e)), 404
     else:
         # TODO: Other blockchains
         return ErrorParameterResponse("This chain is not yet supported", "network_key"), 400
@@ -266,21 +280,28 @@ def new_job(body=None):  # noqa: E501
     """
     if connexion.request.is_json:
         body = JobCreateBody.from_dict(connexion.request.get_json())  # noqa: E501
-    if body.network_key() == 0:  # Ethereum Rinkeby
+    if body.network_id == 0:  # Ethereum Rinkeby
         try:
+            req = Request(body.manifest_url)
+            req.add_header(
+                "User-Agent",
+                "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.75 Safari/537.36"
+            )
+            req.add_header("X-Requested-With", "XMLHttpRequest")
+            data = urlopen(req).read()
+            manifest = json.loads(data)
             job = Job({
-                "gas_payer": body.gas_payer(),
-                "gas_payer_priv": body.gas_payer_private()
-            }, Manifest(**(download(body.manifest_url(), body.gas_payer_private()))),
-                      body.factory_address())
+                "gas_payer": body.gas_payer,
+                "gas_payer_priv": body.gas_payer_private
+            }, Manifest(manifest))
         except Exception as e:
-            return ErrorParameterResponse(e, "manifest_url or gas_payer_private"), 401
+            return ErrorParameterResponse(str(e), "manifest_url or gas_payer_private"), 401
         try:
-            job.launch(bytes(body.rep_oracle_pub()))
+            job.launch(bytes(body.rep_oracle_pub, encoding="utf-8"))
             job.setup()
             return StringDataResponse(job.job_contract.address), 200
         except Exception as e:
-            return ErrorParameterResponse(e, "rep_oracle_pub_key"), 401
+            return ErrorParameterResponse(str(e), "rep_oracle_pub_key"), 401
     else:
         # TODO: Other blockchains
-        return ErrorParameterResponse("This chain is not yet supported", "network_key"), 401
+        return ErrorParameterResponse("This chain is not yet supported", "network_id"), 401

@@ -1,7 +1,8 @@
 #!/bin/bash
-set -exu
+set -ex
 
 ./bin/stop
 
-docker-compose build
-docker-compose run --no-deps -e CI=true human-api bash -c "tox"
+docker-compose up -d
+docker-compose exec -e CI=true human-api ./bin/lint
+docker-compose exec human-api bash -c "./bin/wait_deploy_run"

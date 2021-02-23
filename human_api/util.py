@@ -2,6 +2,11 @@ import datetime
 
 import six
 import typing
+import logging
+
+# Setup Logging
+LOGGER = logging.getLogger("human-api")
+logging.basicConfig(level="INFO")
 
 
 def _deserialize(data, klass):
@@ -137,3 +142,30 @@ def _deserialize_dict(data, boxed_type):
     :rtype: dict
     """
     return {k: _deserialize(v, boxed_type) for k, v in six.iteritems(data)}
+
+
+# This will find the launch block number of any contract
+def _binary_launch_search(w3, address, low_b, high_b):
+    """
+    Pretty basic binary search: goes through all the blocks and looks for the
+    block number when the given address was launched.
+    """
+    if not w3.isChecksumAddress(address):
+        raise ValueError(
+            "Invalid address provided, either not checksumed or not an actual address.")
+
+    if high_b >= low_b:
+        block = (high_b + low_b) // 2
+
+        if w3.eth.getCode(address, block_identifier=block
+                          ):  # contract has been launched before or when `block` was mined.
+            # The getCode function wil retrieve the bytecode at that address (basically it tells us whether there's any contract launched at that address)
+            if not w3.eth.getCode(address, block_identifier=block -
+                                  1):  # contract has been launched when `block` was mined.
+                return block
+            else:
+                return _binary_launch_search(w3, address, low_b, block - 1)
+        else:
+            return _binary_launch_search(w3, address, block + 1, high_b)
+    else:
+        raise LookupError(f"cant find contract launched at address {address} in blockchain")
