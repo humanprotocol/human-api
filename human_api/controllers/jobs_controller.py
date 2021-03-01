@@ -10,6 +10,7 @@ from human_api.models.error_parameter_response import ErrorParameterResponse  # 
 from human_api.models.error_unauthorized_response import ErrorUnauthorizedResponse  # noqa: E501
 from human_api.models.int_data_response import IntDataResponse  # noqa: E501
 from human_api.models.job_create_body import JobCreateBody  # noqa: E501
+from human_api.models.store_job_intermediate_results_body import StoreJobIntermediateResults  # noqa: E501
 from human_api.models.job_status_response import JobStatusResponse  # noqa: E501
 from human_api.models.string_data_response import StringDataResponse  # noqa: E501
 from human_api.util import LOGGER
@@ -293,7 +294,7 @@ def new_job(body=None):  # noqa: E501
             job = Job({
                 "gas_payer": body.gas_payer,
                 "gas_payer_priv": body.gas_payer_private
-            }, Manifest(manifest))
+            }, Manifest(manifest), body.factory_address)
         except Exception as e:
             return ErrorParameterResponse(str(e), "manifest_url or gas_payer_private"), 401
         try:
@@ -305,3 +306,52 @@ def new_job(body=None):  # noqa: E501
     else:
         # TODO: Other blockchains
         return ErrorParameterResponse("This chain is not yet supported", "network_id"), 401
+
+
+def store_job_interemediate_results(body=None):  # noqa: E501
+    """Store intermediate results to S3 for the given escrow
+
+    Given an escrow address, a URL where the results can be found in the form of a JSON file, and a public key will upload to S3 these intermediate results and will emit an event on the escrow contract # noqa: E501
+
+    :param body: 
+    :type body: dict | bytes
+
+    :rtype: BoolDataResponse
+    """
+    if connexion.request.is_json:
+        body = StoreJobIntermediateResults.from_dict(connexion.request.get_json())  # noqa: E501
+    if body.network_id == 0:  # Ethereum Rinkeby
+        try:
+            factory_addr = launcher(get_escrow(body.address), body.gas_payer)
+        except Exception as e:
+            return ErrorNotexistResponse(str(e)), 404
+        try:
+            req = Request(body.results_url)
+            req.add_header(
+                "User-Agent",
+                "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.75 Safari/537.36"
+            )
+            req.add_header("X-Requested-With", "XMLHttpRequest")
+            data = urlopen(req).read()
+            results = json.loads(data)
+        except Exception as e:
+            return ErrorParameterResponse(str(e), "results_url"), 400
+        try:
+            job = Job(credentials={
+                "gas_payer": body.gas_payer,
+                "gas_payer_priv": body.gas_payer_private,
+                "rep_oracle_priv_key": bytes(body.gas_payer_private.lstrip("0x"), encoding="utf-8")
+            },
+                      factory_addr=factory_addr,
+                      escrow_addr=body.address)
+        except Exception as e:
+            return ErrorUnauthorizedResponse(str(e)), 401
+        try:
+            return BoolDataResponse(
+                job.store_intermediate_results(results, bytes(body.rep_oracle_pub,
+                                                              encoding="utf-8"))), 200
+        except Exception as e:
+            return ErrorParameterResponse(str(e), "rep_oracle_pub_key"), 400
+    else:
+        # TODO: Other blockchains
+        return ErrorParameterResponse("This chain is not yet supported", "network_id"), 400

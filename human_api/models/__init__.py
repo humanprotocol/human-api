@@ -13,6 +13,7 @@ from human_api.models.int_data_response import IntDataResponse
 from human_api.models.job_create_body import JobCreateBody
 from human_api.models.job_list_response import JobListResponse
 from human_api.models.job_status_response import JobStatusResponse
+from human_api.models.store_job_intermediate_results_body import StoreJobIntermediateResults
 from human_api.models.manifest_validity_response import ManifestValidityResponse
 from human_api.models.network_list_response import NetworkListResponse
 from human_api.models.network_list_response_networks import NetworkListResponseNetworks

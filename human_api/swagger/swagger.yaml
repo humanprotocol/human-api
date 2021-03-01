@@ -734,6 +734,44 @@ paths:
               schema:
                 $ref: '#/components/schemas/error_notexist_response'
       x-openapi-router-controller: human_api.controllers.jobs_controller
+  /job/storeIntermediateResults:
+    post:
+      tags:
+      - Jobs
+      summary: Store intermediate results to S3 for the given escrow
+      description: Given an escrow address, a URL where the results can be found in the form of a JSON file, and a public key will upload to S3 these intermediate results and will emit an event on the escrow contract
+      operationId: store_job_interemediate_results
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/store_job_intermediate_results_body'
+      responses:
+        "200":
+          description: Store intermediate results for the job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bool_data_response'
+        "400":
+          description: invalid input parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_parameter_response'
+        "401":
+          description: Unauthorized Gas Payer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_unauthorized_response'
+        "404":
+          description: Address does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_notexist_response'
+      x-openapi-router-controller: human_api.controllers.jobs_controller
 components:
   schemas:
     network_list_response:
@@ -825,6 +863,27 @@ components:
         manifestUrl:
           type: string
           example: http://example.com/manifest.json
+        networkId:
+          type: integer
+          default: 0
+    store_job_intermediate_results_body:
+      type: object
+      properties:
+        gasPayer:
+          type: string
+          example: 0x000000000000000
+        gasPayerPrivate:
+          type: string
+          example: 0x000000000000000
+        address:
+          type: string
+          example: 0x000000000000000
+        repOraclePub:
+          type: string
+          example: <reputation oracles public address> 0x0000000
+        resultsUrl:
+          type: string
+          example: http://example.com/results.json
         networkId:
           type: integer
           default: 0

@@ -12,6 +12,7 @@ from human_api.models.error_parameter_response import ErrorParameterResponse  # 
 from human_api.models.error_unauthorized_response import ErrorUnauthorizedResponse  # noqa: E501
 from human_api.models.int_data_response import IntDataResponse  # noqa: E501
 from human_api.models.job_create_body import JobCreateBody  # noqa: E501
+from human_api.models.store_job_intermediate_results_body import StoreJobIntermediateResults  # noqa: E501
 from human_api.models.job_status_response import JobStatusResponse  # noqa: E501
 from human_api.models.string_data_response import StringDataResponse  # noqa: E501
 from human_api.test import BaseTestCase
@@ -158,6 +159,28 @@ class TestJobsController(BaseTestCase):
                                     data=json.dumps(body),
                                     content_type='application/json')
         self.assert200(response, 'Response body is : ' + response.data.decode('utf-8'))
+
+    def test_store_job_intermediate_results_job(self):
+        """Test case for store_job_intermediate_results_job
+
+        Store intermediate results to S3 for the given escrow
+        """
+        RESULTS_PATH = "/work/human_api/test/dumps/test_results_file"
+        results_url = f"file://{RESULTS_PATH}"
+        job = Job({
+            "gas_payer": GAS_PAYER,
+            "gas_payer_priv": GAS_PAYER_PRIV
+        }, manifest, FACTORY_ADDRESS)
+        job.launch(REP_ORACLE_PUB_KEY)
+        job.setup()
+        body = StoreJobIntermediateResults(GAS_PAYER, GAS_PAYER_PRIV, job.job_contract.address,
+                                           REP_ORACLE_PUB_KEY.decode("utf-8"), results_url)
+        response = self.client.open('/job/storeIntermediateResults',
+                                    method='POST',
+                                    data=json.dumps(body),
+                                    content_type='application/json')
+        self.assert200(response, 'Response body is : ' + response.data.decode('utf-8'))
+        self.assertTrue(response.data)
 
 
 if __name__ == '__main__':
