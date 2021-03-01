@@ -10,9 +10,6 @@ from human_api.models.job_list_response import JobListResponse  # noqa: E501
 from human_api.models.string_data_response import StringDataResponse  # noqa: E501
 from human_api.util import _binary_launch_search
 from hmt_escrow.eth_bridge import get_factory as eth_bridge_factory, deploy_factory, get_w3
-from web3 import Web3
-from web3.middleware import geth_poa_middleware
-from solcx import compile_files
 
 
 def get_factory(address, gas_payer, gas_payer_private, network_key=None):  # noqa: E501
@@ -32,35 +29,10 @@ def get_factory(address, gas_payer, gas_payer_private, network_key=None):  # noq
     :rtype: JobListResponse
     """
     if network_key == 0:  # Ethereum Rinkeby
-        try:
-            HMT_ETH_SERVER = os.getenv("HMT_ETH_SERVER")
-            # If connected to Rinkeby on Infura
-            INFURA_PID = HMT_ETH_SERVER.split("rinkeby.infura.io/v3/", 1)[1]
-            w3 = Web3(Web3.WebsocketProvider(f"wss://rinkeby.infura.io/ws/v3/{INFURA_PID}"))
-        except IndexError:
-            # If connected to local ganache
-            GANACHE_PID = HMT_ETH_SERVER.split("http://", 1)[1]
-            w3 = Web3(Web3.WebsocketProvider(f"ws://{GANACHE_PID}"))
-
-        # Required for the Rinkeby testnet
-        w3.middleware_onion.inject(geth_poa_middleware, layer=0)
-
-        CONTRACT_FOLDER = os.getenv("CONTRACT_FOLDER")
-
-        CONTRACTS = compile_files([
-            "{}/Escrow.sol".format(CONTRACT_FOLDER),
-            "{}/EscrowFactory.sol".format(CONTRACT_FOLDER),
-            "{}/HMToken.sol".format(CONTRACT_FOLDER),
-            "{}/HMTokenInterface.sol".format(CONTRACT_FOLDER),
-            "{}/SafeMath.sol".format(CONTRACT_FOLDER),
-        ])
-
-        contract_interface = CONTRACTS["{}/EscrowFactory.sol:EscrowFactory".format(
-            CONTRACT_FOLDER)]
-
+        w3 = get_w3()
         try:
             factory_launch = _binary_launch_search(w3, address, 0, w3.eth.blockNumber)
-            factory = w3.eth.contract(address=address, abi=contract_interface["abi"])
+            factory = eth_bridge_factory(address)
             escrows = []
             for event in factory.events.Launched.createFilter(
                     fromBlock=factory_launch).get_all_entries():

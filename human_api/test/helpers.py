@@ -1,4 +1,3 @@
-import logging
 import os
 
 from human_api.test.config import GAS_PAYER
