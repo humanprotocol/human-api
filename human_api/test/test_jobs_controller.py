@@ -12,8 +12,9 @@ from human_api.models.error_parameter_response import ErrorParameterResponse  # 
 from human_api.models.error_unauthorized_response import ErrorUnauthorizedResponse  # noqa: E501
 from human_api.models.int_data_response import IntDataResponse  # noqa: E501
 from human_api.models.job_create_body import JobCreateBody  # noqa: E501
-from human_api.models.store_job_intermediate_results_body import StoreJobIntermediateResults  # noqa: E501
-from human_api.models.bulk_payout_job_body import BulkPayoutJob
+from human_api.models.store_job_intermediate_results_body import StoreJobIntermediateResultsBody  # noqa: E501
+from human_api.models.bulk_payout_job_body import BulkPayoutJobBody  # noqa: E501
+from human_api.models.add_job_trusted_handlers_body import AddJobTrustedHandlersBody  # noqa: E501
 from human_api.models.job_status_response import JobStatusResponse  # noqa: E501
 from human_api.models.string_data_response import StringDataResponse  # noqa: E501
 from human_api.test import BaseTestCase
@@ -174,8 +175,8 @@ class TestJobsController(BaseTestCase):
         }, manifest, FACTORY_ADDRESS)
         job.launch(REP_ORACLE_PUB_KEY)
         job.setup()
-        body = StoreJobIntermediateResults(GAS_PAYER, GAS_PAYER_PRIV, job.job_contract.address,
-                                           REP_ORACLE_PUB_KEY.decode("utf-8"), results_url)
+        body = StoreJobIntermediateResultsBody(GAS_PAYER, GAS_PAYER_PRIV, job.job_contract.address,
+                                               REP_ORACLE_PUB_KEY.decode("utf-8"), results_url)
         response = self.client.open('/job/storeIntermediateResults',
                                     method='POST',
                                     data=json.dumps(body),
@@ -196,9 +197,33 @@ class TestJobsController(BaseTestCase):
         }, manifest, FACTORY_ADDRESS)
         job.launch(REP_ORACLE_PUB_KEY)
         job.setup()
-        body = BulkPayoutJob(GAS_PAYER, GAS_PAYER_PRIV, job.job_contract.address,
-                             REP_ORACLE_PUB_KEY.decode("utf-8"), results_url, payouts_url)
+        body = BulkPayoutJobBody(GAS_PAYER, GAS_PAYER_PRIV, job.job_contract.address,
+                                 REP_ORACLE_PUB_KEY.decode("utf-8"), results_url, payouts_url)
         response = self.client.open('/job/bulkPayout',
+                                    method='POST',
+                                    data=json.dumps(body),
+                                    content_type='application/json')
+        self.assert200(response, 'Response body is : ' + response.data.decode('utf-8'))
+        self.assertTrue(response.data)
+
+    def test_add_job_trusted_handlers(self):
+        """Test case for add_job_trusted_handlers
+
+        Add trusted handlers that can freely transact with the contract
+        """
+        trusted_handlers = [
+            '0x61F9F0B31eacB420553da8BCC59DC617279731Ac',
+            '0xD979105297fB0eee83F7433fC09279cb5B94fFC6'
+        ]
+        job = Job({
+            "gas_payer": GAS_PAYER,
+            "gas_payer_priv": GAS_PAYER_PRIV
+        }, manifest, FACTORY_ADDRESS)
+        job.launch(REP_ORACLE_PUB_KEY)
+        job.setup()
+        body = AddJobTrustedHandlersBody(GAS_PAYER, GAS_PAYER_PRIV, job.job_contract.address,
+                                         trusted_handlers)
+        response = self.client.open('/job/addTrustedHandlers',
                                     method='POST',
                                     data=json.dumps(body),
                                     content_type='application/json')

@@ -810,6 +810,45 @@ paths:
               schema:
                 $ref: '#/components/schemas/error_notexist_response'
       x-openapi-router-controller: human_api.controllers.jobs_controller
+  /job/addTrustedHandlers:
+    post:
+      tags:
+      - Jobs
+      summary: Add trusted handlers that can freely transact with the contract
+      description: |
+        A trusted handler can perform aborts and cancels, for example
+      operationId: add_job_trusted_handlers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/add_job_trusted_handlers_body'
+      responses:
+        "200":
+          description: Trusted handlers added gracefully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bool_data_response'
+        "400":
+          description: invalid input parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_parameter_response'
+        "401":
+          description: Unauthorized Gas Payer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_unauthorized_response'
+        "404":
+          description: Address does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_notexist_response'
+      x-openapi-router-controller: human_api.controllers.jobs_controller
 components:
   schemas:
     network_list_response:
@@ -946,6 +985,25 @@ components:
         payoutsUrl:
           type: string
           example: http://example.com/results.json
+        networkId:
+          type: integer
+          default: 0
+    add_job_trusted_handlers_body:
+      type: object
+      properties:
+        gasPayer:
+          type: string
+          example: 0x000000000000000
+        gasPayerPrivate:
+          type: string
+          example: 0x000000000000000
+        address:
+          type: string
+          example: 0x000000000000000
+        handlers:
+          type: array
+          items:
+            type: string
         networkId:
           type: integer
           default: 0

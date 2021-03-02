@@ -10,8 +10,9 @@ from human_api.models.error_parameter_response import ErrorParameterResponse  # 
 from human_api.models.error_unauthorized_response import ErrorUnauthorizedResponse  # noqa: E501
 from human_api.models.int_data_response import IntDataResponse  # noqa: E501
 from human_api.models.job_create_body import JobCreateBody  # noqa: E501
-from human_api.models.store_job_intermediate_results_body import StoreJobIntermediateResults  # noqa: E501
-from human_api.models.bulk_payout_job_body import BulkPayoutJob  # noqa: E501
+from human_api.models.store_job_intermediate_results_body import StoreJobIntermediateResultsBody  # noqa: E501
+from human_api.models.bulk_payout_job_body import BulkPayoutJobBody  # noqa: E501
+from human_api.models.add_job_trusted_handlers_body import AddJobTrustedHandlersBody  # noqa: E501
 from human_api.models.job_status_response import JobStatusResponse  # noqa: E501
 from human_api.models.string_data_response import StringDataResponse  # noqa: E501
 from human_api.util import LOGGER
@@ -321,7 +322,8 @@ def store_job_interemediate_results(body=None):  # noqa: E501
     :rtype: BoolDataResponse
     """
     if connexion.request.is_json:
-        body = StoreJobIntermediateResults.from_dict(connexion.request.get_json())  # noqa: E501
+        body = StoreJobIntermediateResultsBody.from_dict(
+            connexion.request.get_json())  # noqa: E501
     if body.network_id == 0:  # Ethereum Rinkeby
         try:
             factory_addr = launcher(get_escrow(body.address), body.gas_payer)
@@ -370,7 +372,7 @@ def bulk_payout_job(body=None):  # noqa: E501
     :rtype: BoolDataResponse
     """
     if connexion.request.is_json:
-        body = BulkPayoutJob.from_dict(connexion.request.get_json())  # noqa: E501
+        body = BulkPayoutJobBody.from_dict(connexion.request.get_json())  # noqa: E501
     if body.network_id == 0:  # Ethereum Rinkeby
         try:
             factory_addr = launcher(get_escrow(body.address), body.gas_payer)
@@ -415,6 +417,42 @@ def bulk_payout_job(body=None):  # noqa: E501
                                                         encoding="utf-8"))), 200
         except Exception as e:
             return ErrorParameterResponse(str(e), "rep_oracle_pub_key"), 400
+    else:
+        # TODO: Other blockchains
+        return ErrorParameterResponse("This chain is not yet supported", "network_id"), 400
+
+
+def add_job_trusted_handlers(body=None):  # noqa: E501
+    """Add trusted handlers that can freely transact with the contract
+
+    A trusted handler can perform aborts and cancels, for example
+
+    :param body: 
+    :type body: dict | bytes
+
+    :rtype: BoolDataResponse
+    """
+    if connexion.request.is_json:
+        body = AddJobTrustedHandlersBody.from_dict(connexion.request.get_json())  # noqa: E501
+    if body.network_id == 0:  # Ethereum Rinkeby
+        try:
+            factory_addr = launcher(get_escrow(body.address), body.gas_payer)
+        except Exception as e:
+            return ErrorNotexistResponse(str(e)), 404
+        try:
+            job = Job(credentials={
+                "gas_payer": body.gas_payer,
+                "gas_payer_priv": body.gas_payer_private,
+                "rep_oracle_priv_key": bytes(body.gas_payer_private.lstrip("0x"), encoding="utf-8")
+            },
+                      factory_addr=factory_addr,
+                      escrow_addr=body.address)
+        except Exception as e:
+            return ErrorUnauthorizedResponse(str(e)), 401
+        try:
+            return BoolDataResponse(job.add_trusted_handlers(body.handlers)), 200
+        except Exception as e:
+            return ErrorParameterResponse(str(e), "handlers"), 400
     else:
         # TODO: Other blockchains
         return ErrorParameterResponse("This chain is not yet supported", "network_id"), 400
