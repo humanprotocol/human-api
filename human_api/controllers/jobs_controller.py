@@ -456,3 +456,92 @@ def add_job_trusted_handlers(body=None):  # noqa: E501
     else:
         # TODO: Other blockchains
         return ErrorParameterResponse("This chain is not yet supported", "network_id"), 400
+
+
+def job_intermediate_results(address,
+                             gas_payer,
+                             gas_payer_private,
+                             rep_oracle_private,
+                             network_key=None):  # noqa: E501
+    """Retrieve the intermediate results stored by the Recording Oracle
+
+    Retrieve the intermediate results stored by the Recording Oracle  # noqa: E501
+
+    :param address: Deployed Job address
+    :type address: str
+    :param gas_payer: address paying which started the job or a trusted handler
+    :type gas_payer: str
+    :param gas_payer_private: Private Key for the address paying for the gas costs
+    :type gas_payer_private: str
+    :param rep_oracle_private: Private Key for the reputation oracle
+    :type rep_oracle_private: str
+    :param network_key: Unique Identifier for the blockchain network to use. (0 is the default for Ethereum mainnet)
+    :type network_key: int
+
+    :rtype: StringDataResponse
+    """
+    if network_key == 0:  # Ethereum Rinkeby
+        try:
+            factory_addr = launcher(get_escrow(address), gas_payer)
+        except Exception as e:
+            return ErrorNotexistResponse(str(e)), 404
+        try:
+            job = Job(credentials={
+                "gas_payer": gas_payer,
+                "gas_payer_priv": gas_payer_private,
+                "rep_oracle_priv_key": bytes(rep_oracle_private, encoding="utf-8")
+            },
+                      factory_addr=factory_addr,
+                      escrow_addr=address)
+            return StringDataResponse(
+                json.dumps(job.intermediate_results(bytes(rep_oracle_private,
+                                                          encoding="utf-8")))), 200
+        except Exception as e:
+            return ErrorUnauthorizedResponse(str(e)), 401
+    else:
+        # TODO: Other blockchains
+        return ErrorParameterResponse("This chain is not yet supported", "network_key"), 400
+
+
+def job_final_results(address,
+                      gas_payer,
+                      gas_payer_private,
+                      rep_oracle_private,
+                      network_key=None):  # noqa: E501
+    """Retrieve the final results
+
+    Retrieve the final results  # noqa: E501
+
+    :param address: Deployed Job address
+    :type address: str
+    :param gas_payer: address paying which started the job or a trusted handler
+    :type gas_payer: str
+    :param gas_payer_private: Private Key for the address paying for the gas costs
+    :type gas_payer_private: str
+    :param rep_oracle_private: Private Key for the reputation oracle
+    :type rep_oracle_private: str
+    :param network_key: Unique Identifier for the blockchain network to use. (0 is the default for Ethereum mainnet)
+    :type network_key: int
+
+    :rtype: StringDataResponse
+    """
+    if network_key == 0:  # Ethereum Rinkeby
+        try:
+            factory_addr = launcher(get_escrow(address), gas_payer)
+        except Exception as e:
+            return ErrorNotexistResponse(str(e)), 404
+        try:
+            job = Job(credentials={
+                "gas_payer": gas_payer,
+                "gas_payer_priv": gas_payer_private,
+                "rep_oracle_priv_key": bytes(rep_oracle_private, encoding="utf-8")
+            },
+                      factory_addr=factory_addr,
+                      escrow_addr=address)
+            return StringDataResponse(
+                json.dumps(job.final_results(bytes(rep_oracle_private, encoding="utf-8")))), 200
+        except Exception as e:
+            return ErrorUnauthorizedResponse(str(e)), 401
+    else:
+        # TODO: Other blockchains
+        return ErrorParameterResponse("This chain is not yet supported", "network_key"), 400

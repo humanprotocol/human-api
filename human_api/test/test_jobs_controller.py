@@ -4,6 +4,7 @@ from __future__ import absolute_import
 
 from flask import json
 from six import BytesIO
+from decimal import Decimal
 
 from human_api.models.bool_data_response import BoolDataResponse  # noqa: E501
 from human_api.models.error_notcreate_response import ErrorNotcreateResponse  # noqa: E501
@@ -229,6 +230,47 @@ class TestJobsController(BaseTestCase):
                                     content_type='application/json')
         self.assert200(response, 'Response body is : ' + response.data.decode('utf-8'))
         self.assertTrue(response.data)
+
+    def test_intermediate_results_job(self):
+        """Test case for intermediate_results_job
+
+        Retrieve the intermediate results stored by the Recording Oracle
+        """
+        job = Job({
+            "gas_payer": GAS_PAYER,
+            "gas_payer_priv": GAS_PAYER_PRIV
+        }, manifest, FACTORY_ADDRESS)
+        job.launch(REP_ORACLE_PUB_KEY)
+        job.setup()
+        job.store_intermediate_results({"results": True}, REP_ORACLE_PUB_KEY)
+        query_string = [('address', job.job_contract.address), ('gasPayer', GAS_PAYER),
+                        ('gasPayerPrivate', GAS_PAYER_PRIV),
+                        ('repOraclePrivate', GAS_PAYER_PRIV.lstrip("0x")), ('networkKey', 0)]
+        response = self.client.open('/job/intermediateResults',
+                                    method='GET',
+                                    query_string=query_string)
+        self.assert200(response, 'Response body is : ' + response.data.decode('utf-8'))
+        self.LOG.error(response.data.decode('utf-8'))
+
+    def test_final_results_job(self):
+        """Test case for final_results_job
+
+        Retrieve the final results stored by the Recording Oracle
+        """
+        job = Job({
+            "gas_payer": GAS_PAYER,
+            "gas_payer_priv": GAS_PAYER_PRIV
+        }, manifest, FACTORY_ADDRESS)
+        job.launch(REP_ORACLE_PUB_KEY)
+        job.setup()
+        payouts = [("0x852023fbb19050B8291a335E5A83Ac9701E7B4E6", Decimal('100.0'))]
+        job.bulk_payout(payouts, {'results': 0}, REP_ORACLE_PUB_KEY)
+        query_string = [('address', job.job_contract.address), ('gasPayer', GAS_PAYER),
+                        ('gasPayerPrivate', GAS_PAYER_PRIV),
+                        ('repOraclePrivate', GAS_PAYER_PRIV.lstrip("0x")), ('networkKey', 0)]
+        response = self.client.open('/job/finalResults', method='GET', query_string=query_string)
+        self.assert200(response, 'Response body is : ' + response.data.decode('utf-8'))
+        self.LOG.error(response.data.decode('utf-8'))
 
 
 if __name__ == '__main__':

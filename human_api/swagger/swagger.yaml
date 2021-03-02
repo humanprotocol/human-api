@@ -849,6 +849,148 @@ paths:
               schema:
                 $ref: '#/components/schemas/error_notexist_response'
       x-openapi-router-controller: human_api.controllers.jobs_controller
+  /job/intermediateResults:
+    get:
+      tags:
+      - Jobs
+      summary: Retrieve the intermediate results stored by the Recording Oracle
+      description: |
+        Retrieve the intermediate results stored by the Recording Oracle
+      operationId: job_intermediate_results
+      parameters:
+      - name: address
+        in: query
+        description: Deployed Job address
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: gasPayer
+        in: query
+        description: address paying for the gas costs
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: gasPayerPrivate
+        in: query
+        description: Private Key for the address paying for the gas costs
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: repOraclePrivate
+        in: query
+        description: Private Key for the reputation oracle
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: networkKey
+        in: query
+        description: Unique Identifier for the blockchain network to use. (0 is the
+          default for Ethereum mainnet)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          default: 0
+      responses:
+        "200":
+          description: Stringified JSON with intermediate results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/string_data_response'
+        "400":
+          description: invalid input parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_parameter_response'
+        "404":
+          description: Address does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_notexist_response'
+      x-openapi-router-controller: human_api.controllers.jobs_controller
+  /job/finalResults:
+    get:
+      tags:
+      - Jobs
+      summary: Retrieve the final results
+      description: |
+        Retrieve the final results
+      operationId: job_final_results
+      parameters:
+      - name: address
+        in: query
+        description: Deployed Job address
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: gasPayer
+        in: query
+        description: address paying for the gas costs
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: gasPayerPrivate
+        in: query
+        description: Private Key for the address paying for the gas costs
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: repOraclePrivate
+        in: query
+        description: Private Key for the reputation oracle
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: networkKey
+        in: query
+        description: Unique Identifier for the blockchain network to use. (0 is the
+          default for Ethereum mainnet)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          default: 0
+      responses:
+        "200":
+          description: Stringified JSON with final results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/string_data_response'
+        "400":
+          description: invalid input parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_parameter_response'
+        "404":
+          description: Address does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_notexist_response'
+      x-openapi-router-controller: human_api.controllers.jobs_controller
 components:
   schemas:
     network_list_response:
