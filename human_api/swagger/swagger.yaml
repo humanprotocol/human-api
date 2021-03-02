@@ -734,6 +734,263 @@ paths:
               schema:
                 $ref: '#/components/schemas/error_notexist_response'
       x-openapi-router-controller: human_api.controllers.jobs_controller
+  /job/storeIntermediateResults:
+    post:
+      tags:
+      - Jobs
+      summary: Store intermediate results to S3 for the given escrow
+      description: Given an escrow address, a URL where the results can be found in the form of a JSON file, and a public key will upload to S3 these intermediate results and will emit an event on the escrow contract
+      operationId: store_job_interemediate_results
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/store_job_intermediate_results_body'
+      responses:
+        "200":
+          description: Store intermediate results for the job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bool_data_response'
+        "400":
+          description: invalid input parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_parameter_response'
+        "401":
+          description: Unauthorized Gas Payer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_unauthorized_response'
+        "404":
+          description: Address does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_notexist_response'
+      x-openapi-router-controller: human_api.controllers.jobs_controller
+  /job/bulkPayout:
+    post:
+      tags:
+      - Jobs
+      summary: Performs a payout to multiple ethereum addresses.
+      description: When the payout happens, final results are uploaded to S3 and contract's state is updated to Partial or Paid depending on contract's balance.
+      operationId: bulk_payout_job
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/bulk_payout_job_body'
+      responses:
+        "200":
+          description: Bulk payments sent gracefully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bool_data_response'
+        "400":
+          description: invalid input parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_parameter_response'
+        "401":
+          description: Unauthorized Gas Payer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_unauthorized_response'
+        "404":
+          description: Address does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_notexist_response'
+      x-openapi-router-controller: human_api.controllers.jobs_controller
+  /job/addTrustedHandlers:
+    post:
+      tags:
+      - Jobs
+      summary: Add trusted handlers that can freely transact with the contract
+      description: |
+        A trusted handler can perform aborts and cancels, for example
+      operationId: add_job_trusted_handlers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/add_job_trusted_handlers_body'
+      responses:
+        "200":
+          description: Trusted handlers added gracefully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bool_data_response'
+        "400":
+          description: invalid input parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_parameter_response'
+        "401":
+          description: Unauthorized Gas Payer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_unauthorized_response'
+        "404":
+          description: Address does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_notexist_response'
+      x-openapi-router-controller: human_api.controllers.jobs_controller
+  /job/intermediateResults:
+    get:
+      tags:
+      - Jobs
+      summary: Retrieve the intermediate results stored by the Recording Oracle
+      description: |
+        Retrieve the intermediate results stored by the Recording Oracle
+      operationId: job_intermediate_results
+      parameters:
+      - name: address
+        in: query
+        description: Deployed Job address
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: gasPayer
+        in: query
+        description: address paying for the gas costs
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: gasPayerPrivate
+        in: query
+        description: Private Key for the address paying for the gas costs
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: repOraclePrivate
+        in: query
+        description: Private Key for the reputation oracle
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: networkKey
+        in: query
+        description: Unique Identifier for the blockchain network to use. (0 is the
+          default for Ethereum mainnet)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          default: 0
+      responses:
+        "200":
+          description: Stringified JSON with intermediate results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/string_data_response'
+        "400":
+          description: invalid input parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_parameter_response'
+        "404":
+          description: Address does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_notexist_response'
+      x-openapi-router-controller: human_api.controllers.jobs_controller
+  /job/finalResults:
+    get:
+      tags:
+      - Jobs
+      summary: Retrieve the final results
+      description: |
+        Retrieve the final results
+      operationId: job_final_results
+      parameters:
+      - name: address
+        in: query
+        description: Deployed Job address
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: gasPayer
+        in: query
+        description: address paying for the gas costs
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: gasPayerPrivate
+        in: query
+        description: Private Key for the address paying for the gas costs
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: repOraclePrivate
+        in: query
+        description: Private Key for the reputation oracle
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: networkKey
+        in: query
+        description: Unique Identifier for the blockchain network to use. (0 is the
+          default for Ethereum mainnet)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          default: 0
+      responses:
+        "200":
+          description: Stringified JSON with final results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/string_data_response'
+        "400":
+          description: invalid input parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_parameter_response'
+        "404":
+          description: Address does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_notexist_response'
+      x-openapi-router-controller: human_api.controllers.jobs_controller
 components:
   schemas:
     network_list_response:
@@ -825,6 +1082,70 @@ components:
         manifestUrl:
           type: string
           example: http://example.com/manifest.json
+        networkId:
+          type: integer
+          default: 0
+    store_job_intermediate_results_body:
+      type: object
+      properties:
+        gasPayer:
+          type: string
+          example: 0x000000000000000
+        gasPayerPrivate:
+          type: string
+          example: 0x000000000000000
+        address:
+          type: string
+          example: 0x000000000000000
+        repOraclePub:
+          type: string
+          example: <reputation oracles public address> 0x0000000
+        resultsUrl:
+          type: string
+          example: http://example.com/results.json
+        networkId:
+          type: integer
+          default: 0
+    bulk_payout_job_body:
+      type: object
+      properties:
+        gasPayer:
+          type: string
+          example: 0x000000000000000
+        gasPayerPrivate:
+          type: string
+          example: 0x000000000000000
+        address:
+          type: string
+          example: 0x000000000000000
+        repOraclePub:
+          type: string
+          example: <reputation oracles public address> 0x0000000
+        resultsUrl:
+          type: string
+          example: http://example.com/results.json
+        payoutsUrl:
+          type: string
+          example: http://example.com/results.json
+        networkId:
+          type: integer
+          default: 0
+    add_job_trusted_handlers_body:
+      type: object
+      properties:
+        gasPayer:
+          type: string
+          example: 0x000000000000000
+        gasPayerPrivate:
+          type: string
+          example: 0x000000000000000
+        address:
+          type: string
+          example: 0x000000000000000
+        handlers:
+          type: array
+          items:
+            type: string
         networkId:
           type: integer
           default: 0

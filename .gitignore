@@ -5,4 +5,3 @@
 minio/.minio.sys
 minio/escrow-results/
 !minio/escrow-results/.ignore
-human_api/test/dumps
