@@ -13,10 +13,11 @@ from human_api.models.error_unauthorized_response import ErrorUnauthorizedRespon
 from human_api.models.int_data_response import IntDataResponse  # noqa: E501
 from human_api.models.job_create_body import JobCreateBody  # noqa: E501
 from human_api.models.store_job_intermediate_results_body import StoreJobIntermediateResults  # noqa: E501
+from human_api.models.bulk_payout_job_body import BulkPayoutJob
 from human_api.models.job_status_response import JobStatusResponse  # noqa: E501
 from human_api.models.string_data_response import StringDataResponse  # noqa: E501
 from human_api.test import BaseTestCase
-from human_api.test.config import FACTORY_ADDRESS, GAS_PAYER, GAS_PAYER_PRIV, REP_ORACLE_PUB_KEY
+from human_api.test.config import FACTORY_ADDRESS, GAS_PAYER, GAS_PAYER_PRIV, REP_ORACLE_PUB_KEY, RESULTS_PATH, PAYOUTS_PATH
 from human_api.test.helpers import test_model
 from hmt_escrow.test_manifest import manifest
 from hmt_escrow.job import Job, manifest_url
@@ -176,6 +177,28 @@ class TestJobsController(BaseTestCase):
         body = StoreJobIntermediateResults(GAS_PAYER, GAS_PAYER_PRIV, job.job_contract.address,
                                            REP_ORACLE_PUB_KEY.decode("utf-8"), results_url)
         response = self.client.open('/job/storeIntermediateResults',
+                                    method='POST',
+                                    data=json.dumps(body),
+                                    content_type='application/json')
+        self.assert200(response, 'Response body is : ' + response.data.decode('utf-8'))
+        self.assertTrue(response.data)
+
+    def test_bulk_payout_job(self):
+        """Test case for bulk_payout_job
+
+        Performs a payout to multiple ethereum addresses.
+        """
+        results_url = f"file://{RESULTS_PATH}"
+        payouts_url = f"file://{PAYOUTS_PATH}"
+        job = Job({
+            "gas_payer": GAS_PAYER,
+            "gas_payer_priv": GAS_PAYER_PRIV
+        }, manifest, FACTORY_ADDRESS)
+        job.launch(REP_ORACLE_PUB_KEY)
+        job.setup()
+        body = BulkPayoutJob(GAS_PAYER, GAS_PAYER_PRIV, job.job_contract.address,
+                             REP_ORACLE_PUB_KEY.decode("utf-8"), results_url, payouts_url)
+        response = self.client.open('/job/bulkPayout',
                                     method='POST',
                                     data=json.dumps(body),
                                     content_type='application/json')

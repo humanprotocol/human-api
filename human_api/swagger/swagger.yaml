@@ -772,6 +772,44 @@ paths:
               schema:
                 $ref: '#/components/schemas/error_notexist_response'
       x-openapi-router-controller: human_api.controllers.jobs_controller
+  /job/bulkPayout:
+    post:
+      tags:
+      - Jobs
+      summary: Performs a payout to multiple ethereum addresses.
+      description: When the payout happens, final results are uploaded to S3 and contract's state is updated to Partial or Paid depending on contract's balance.
+      operationId: bulk_payout_job
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/bulk_payout_job_body'
+      responses:
+        "200":
+          description: Bulk payments sent gracefully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bool_data_response'
+        "400":
+          description: invalid input parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_parameter_response'
+        "401":
+          description: Unauthorized Gas Payer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_unauthorized_response'
+        "404":
+          description: Address does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_notexist_response'
+      x-openapi-router-controller: human_api.controllers.jobs_controller
 components:
   schemas:
     network_list_response:
@@ -882,6 +920,30 @@ components:
           type: string
           example: <reputation oracles public address> 0x0000000
         resultsUrl:
+          type: string
+          example: http://example.com/results.json
+        networkId:
+          type: integer
+          default: 0
+    bulk_payout_job_body:
+      type: object
+      properties:
+        gasPayer:
+          type: string
+          example: 0x000000000000000
+        gasPayerPrivate:
+          type: string
+          example: 0x000000000000000
+        address:
+          type: string
+          example: 0x000000000000000
+        repOraclePub:
+          type: string
+          example: <reputation oracles public address> 0x0000000
+        resultsUrl:
+          type: string
+          example: http://example.com/results.json
+        payoutsUrl:
           type: string
           example: http://example.com/results.json
         networkId:
