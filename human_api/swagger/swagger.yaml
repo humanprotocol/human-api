@@ -11,8 +11,6 @@ info:
 servers:
 - url: /
 tags:
-- name: Network
-  description: Endpoint for viewing and adding networks to the protocol
 - name: Factory
   description: Endpoint for Job factory management
 - name: Manifest
@@ -20,47 +18,6 @@ tags:
 - name: Jobs
   description: Endpoint for all job management
 paths:
-  /network:
-    get:
-      tags:
-      - Network
-      summary: Get list of all available networks
-      description: |
-        Get list of all available networks
-      operationId: get_networks
-      responses:
-        "200":
-          description: List of all available networks
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/network_list_response'
-      x-openapi-router-controller: human_api.controllers.network_controller
-  /network/stats:
-    get:
-      tags:
-      - Network
-      summary: Get network statistics
-      description: |
-        Get network statistics
-      operationId: get_network_stats
-      parameters:
-      - name: networkId
-        in: query
-        description: Unique ID of network
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: Network Stats
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/network_stats_response'
-      x-openapi-router-controller: human_api.controllers.network_controller
   /factory:
     get:
       tags:
@@ -94,16 +51,6 @@ paths:
         explode: true
         schema:
           type: string
-      - name: networkKey
-        in: query
-        description: Unique Identifier for the blockchain network to use. (0 is the
-          default for Ethereum mainnet)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: integer
-          default: 0
       responses:
         "200":
           description: List of all jobs deployed in the factory
@@ -245,16 +192,6 @@ paths:
         explode: true
         schema:
           type: string
-      - name: networkKey
-        in: query
-        description: Unique Identifier for the blockchain network to use. (0 is the
-          default for Ethereum mainnet)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: integer
-          default: 0
       responses:
         "200":
           description: Launcher address of the job
@@ -308,16 +245,6 @@ paths:
         explode: true
         schema:
           type: string
-      - name: networkKey
-        in: query
-        description: Unique Identifier for the blockchain network to use. (0 is the
-          default for Ethereum mainnet)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: integer
-          default: 0
       responses:
         "200":
           description: Status of the job
@@ -371,16 +298,6 @@ paths:
         explode: true
         schema:
           type: string
-      - name: networkKey
-        in: query
-        description: Unique Identifier for the blockchain network to use. (0 is the
-          default for Ethereum mainnet)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: integer
-          default: 0
       responses:
         "200":
           description: Manifest URL of the job
@@ -434,16 +351,6 @@ paths:
         explode: true
         schema:
           type: string
-      - name: networkKey
-        in: query
-        description: Unique Identifier for the blockchain network to use. (0 is the
-          default for Ethereum mainnet)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: integer
-          default: 0
       responses:
         "200":
           description: Manifest Hash of the job
@@ -497,16 +404,6 @@ paths:
         explode: true
         schema:
           type: string
-      - name: networkKey
-        in: query
-        description: Unique Identifier for the blockchain network to use. (0 is the
-          default for Ethereum mainnet)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: integer
-          default: 0
       responses:
         "200":
           description: Manifest Hash of the job
@@ -560,16 +457,6 @@ paths:
         explode: true
         schema:
           type: string
-      - name: networkKey
-        in: query
-        description: Unique Identifier for the blockchain network to use. (0 is the
-          default for Ethereum mainnet)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: integer
-          default: 0
       responses:
         "200":
           description: Was the action successful or not
@@ -629,16 +516,6 @@ paths:
         explode: true
         schema:
           type: string
-      - name: networkKey
-        in: query
-        description: Unique Identifier for the blockchain network to use. (0 is the
-          default for Ethereum mainnet)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: integer
-          default: 0
       responses:
         "200":
           description: Was the action successful or not
@@ -698,16 +575,6 @@ paths:
         explode: true
         schema:
           type: string
-      - name: networkKey
-        in: query
-        description: Unique Identifier for the blockchain network to use. (0 is the
-          default for Ethereum mainnet)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: integer
-          default: 0
       responses:
         "200":
           description: Was the action successful or not
@@ -890,16 +757,6 @@ paths:
         explode: true
         schema:
           type: string
-      - name: networkKey
-        in: query
-        description: Unique Identifier for the blockchain network to use. (0 is the
-          default for Ethereum mainnet)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: integer
-          default: 0
       responses:
         "200":
           description: Stringified JSON with intermediate results
@@ -961,16 +818,6 @@ paths:
         explode: true
         schema:
           type: string
-      - name: networkKey
-        in: query
-        description: Unique Identifier for the blockchain network to use. (0 is the
-          default for Ethereum mainnet)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: integer
-          default: 0
       responses:
         "200":
           description: Stringified JSON with final results
@@ -993,39 +840,6 @@ paths:
       x-openapi-router-controller: human_api.controllers.jobs_controller
 components:
   schemas:
-    network_list_response:
-      type: object
-      properties:
-        networks:
-          type: array
-          items:
-            $ref: '#/components/schemas/network_list_response_networks'
-      example:
-        networks:
-        - network_name: ethereum-main
-          networkId: 0
-        - network_name: ethereum-main
-          networkId: 0
-    network_stats_response:
-      type: object
-      properties:
-        networkId:
-          type: integer
-        network_name:
-          type: string
-          example: ethereum-main
-        factory_count:
-          type: integer
-        job_count:
-          type: integer
-        total_payouts:
-          type: integer
-      example:
-        job_count: 1
-        total_payouts: 5
-        network_name: ethereum-main
-        networkId: 0
-        factory_count: 6
     job_list_response:
       type: object
       properties:
@@ -1044,9 +858,6 @@ components:
           type: string
         gasPayerPrivate:
           type: string
-        networkId:
-          type: integer
-          default: 0
     manifest_validity_response:
       type: object
       properties:
@@ -1082,9 +893,6 @@ components:
         manifestUrl:
           type: string
           example: http://example.com/manifest.json
-        networkId:
-          type: integer
-          default: 0
     store_job_intermediate_results_body:
       type: object
       properties:
@@ -1103,9 +911,6 @@ components:
         resultsUrl:
           type: string
           example: http://example.com/results.json
-        networkId:
-          type: integer
-          default: 0
     bulk_payout_job_body:
       type: object
       properties:
@@ -1127,9 +932,6 @@ components:
         payoutsUrl:
           type: string
           example: http://example.com/results.json
-        networkId:
-          type: integer
-          default: 0
     add_job_trusted_handlers_body:
       type: object
       properties:
@@ -1146,9 +948,6 @@ components:
           type: array
           items:
             type: string
-        networkId:
-          type: integer
-          default: 0
     job_status_response:
       type: object
       properties:
@@ -1216,13 +1015,3 @@ components:
         error:
           type: string
           example: Unauthorized
-    network_list_response_networks:
-      type: object
-      properties:
-        network_name:
-          type: string
-          example: ethereum-main
-        networkId:
-          type: integer
-      example: '{"network_name":"ethereum-main","networkId":0}'
-

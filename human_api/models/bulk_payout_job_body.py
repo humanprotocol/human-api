@@ -20,8 +20,7 @@ class BulkPayoutJobBody(Model):
                  address: str = None,
                  rep_oracle_pub: str = None,
                  results_url: str = None,
-                 payouts_url: str = None,
-                 network_id: int = 0):  # noqa: E501
+                 payouts_url: str = None):  # noqa: E501
         """BulkPayoutJobBody - a model defined in Swagger
 
         :param gas_payer: The gas_payer of this BulkPayoutJobBody.  # noqa: E501
@@ -36,8 +35,6 @@ class BulkPayoutJobBody(Model):
         :type results_url: str
         :param payouts_url: The payouts_url of this BulkPayoutJobBody.  # noqa: E501
         :type payouts_url: str
-        :param network_id: The network_id of this BulkPayoutJobBody.  # noqa: E501
-        :type network_id: int
         """
         self.swagger_types = {
             'gas_payer': str,
@@ -46,7 +43,6 @@ class BulkPayoutJobBody(Model):
             'rep_oracle_pub': str,
             'results_url': str,
             'payouts_url': str,
-            'network_id': int
         }
 
         self.attribute_map = {
@@ -56,7 +52,6 @@ class BulkPayoutJobBody(Model):
             'rep_oracle_pub': 'repOraclePub',
             'results_url': 'resultsUrl',
             'payouts_url': 'payoutsUrl',
-            'network_id': 'networkId'
         }
         self._gas_payer = gas_payer
         self._gas_payer_private = gas_payer_private
@@ -64,7 +59,6 @@ class BulkPayoutJobBody(Model):
         self._rep_oracle_pub = rep_oracle_pub
         self._results_url = results_url
         self._payouts_url = payouts_url
-        self._network_id = network_id
 
     @classmethod
     def from_dict(cls, dikt) -> 'BulkPayoutJobBody':
@@ -202,24 +196,3 @@ class BulkPayoutJobBody(Model):
         """
 
         self._payouts_url = payouts_url
-
-    @property
-    def network_id(self) -> int:
-        """Gets the network_id of this BulkPayoutJobBody.
-
-
-        :return: The network_id of this BulkPayoutJobBody.
-        :rtype: int
-        """
-        return self._network_id
-
-    @network_id.setter
-    def network_id(self, network_id: int):
-        """Sets the network_id of this BulkPayoutJobBody.
-
-
-        :param network_id: The network_id of this BulkPayoutJobBody.
-        :type network_id: int
-        """
-
-        self._network_id = network_id

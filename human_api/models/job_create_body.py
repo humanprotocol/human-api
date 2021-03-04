@@ -19,8 +19,7 @@ class JobCreateBody(Model):
                  gas_payer_private: str = None,
                  factory_address: str = None,
                  rep_oracle_pub: str = None,
-                 manifest_url: str = None,
-                 network_id: int = 0):  # noqa: E501
+                 manifest_url: str = None):  # noqa: E501
         """JobCreateBody - a model defined in Swagger
 
         :param gas_payer: The gas_payer of this JobCreateBody.  # noqa: E501
@@ -33,8 +32,6 @@ class JobCreateBody(Model):
         :type rep_oracle_pub: str
         :param manifest_url: The manifest_url of this JobCreateBody.  # noqa: E501
         :type manifest_url: str
-        :param network_id: The network_id of this JobCreateBody.  # noqa: E501
-        :type network_id: int
         """
         self.swagger_types = {
             'gas_payer': str,
@@ -42,7 +39,6 @@ class JobCreateBody(Model):
             'factory_address': str,
             'rep_oracle_pub': str,
             'manifest_url': str,
-            'network_id': int
         }
 
         self.attribute_map = {
@@ -51,14 +47,12 @@ class JobCreateBody(Model):
             'factory_address': 'factoryAddress',
             'rep_oracle_pub': 'repOraclePub',
             'manifest_url': 'manifestUrl',
-            'network_id': 'networkId'
         }
         self._gas_payer = gas_payer
         self._gas_payer_private = gas_payer_private
         self._factory_address = factory_address
         self._rep_oracle_pub = rep_oracle_pub
         self._manifest_url = manifest_url
-        self._network_id = network_id
 
     @classmethod
     def from_dict(cls, dikt) -> 'JobCreateBody':
@@ -175,24 +169,3 @@ class JobCreateBody(Model):
         """
 
         self._manifest_url = manifest_url
-
-    @property
-    def network_id(self) -> int:
-        """Gets the network_id of this JobCreateBody.
-
-
-        :return: The network_id of this JobCreateBody.
-        :rtype: int
-        """
-        return self._network_id
-
-    @network_id.setter
-    def network_id(self, network_id: int):
-        """Sets the network_id of this JobCreateBody.
-
-
-        :param network_id: The network_id of this JobCreateBody.
-        :type network_id: int
-        """
-
-        self._network_id = network_id
