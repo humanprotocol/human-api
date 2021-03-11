@@ -26,7 +26,7 @@ class TestFactoryController(BaseTestCase):
         Returns addresses of all jobs deployed in the factory
         """
         query_string = [('address', FACTORY_ADDRESS), ('gasPayer', GAS_PAYER),
-                        ('gasPayerPrivate', GAS_PAYER_PRIV), ('networkKey', 0)]
+                        ('gasPayerPrivate', GAS_PAYER_PRIV)]
         response = self.client.open('/factory', method='GET', query_string=query_string)
         self.assert200(response, 'Response body is : ' + response.data.decode('utf-8'))
 

@@ -19,8 +19,7 @@ class StoreJobIntermediateResultsBody(Model):
                  gas_payer_private: str = None,
                  address: str = None,
                  rep_oracle_pub: str = None,
-                 results_url: str = None,
-                 network_id: int = 0):  # noqa: E501
+                 results_url: str = None):  # noqa: E501
         """StoreJobIntermediateResultsBody - a model defined in Swagger
 
         :param gas_payer: The gas_payer of this StoreJobIntermediateResultsBody.  # noqa: E501
@@ -33,8 +32,6 @@ class StoreJobIntermediateResultsBody(Model):
         :type rep_oracle_pub: str
         :param results_url: The results_url of this StoreJobIntermediateResultsBody.  # noqa: E501
         :type results_url: str
-        :param network_id: The network_id of this StoreJobIntermediateResultsBody.  # noqa: E501
-        :type network_id: int
         """
         self.swagger_types = {
             'gas_payer': str,
@@ -42,7 +39,6 @@ class StoreJobIntermediateResultsBody(Model):
             'address': str,
             'rep_oracle_pub': str,
             'results_url': str,
-            'network_id': int
         }
 
         self.attribute_map = {
@@ -51,14 +47,12 @@ class StoreJobIntermediateResultsBody(Model):
             'address': 'address',
             'rep_oracle_pub': 'repOraclePub',
             'results_url': 'resultsUrl',
-            'network_id': 'networkId'
         }
         self._gas_payer = gas_payer
         self._gas_payer_private = gas_payer_private
         self._address = address
         self._rep_oracle_pub = rep_oracle_pub
         self._results_url = results_url
-        self._network_id = network_id
 
     @classmethod
     def from_dict(cls, dikt) -> 'StoreJobIntermediateResultsBody':
@@ -175,24 +169,3 @@ class StoreJobIntermediateResultsBody(Model):
         """
 
         self._results_url = results_url
-
-    @property
-    def network_id(self) -> int:
-        """Gets the network_id of this StoreJobIntermediateResultsBody.
-
-
-        :return: The network_id of this StoreJobIntermediateResultsBody.
-        :rtype: int
-        """
-        return self._network_id
-
-    @network_id.setter
-    def network_id(self, network_id: int):
-        """Sets the network_id of this StoreJobIntermediateResultsBody.
-
-
-        :param network_id: The network_id of this StoreJobIntermediateResultsBody.
-        :type network_id: int
-        """
-
-        self._network_id = network_id

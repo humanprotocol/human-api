@@ -14,29 +14,22 @@ class FactoryCreateBody(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self,
-                 gas_payer: str = None,
-                 gas_payer_private: str = None,
-                 network_id: int = 0):  # noqa: E501
+    def __init__(self, gas_payer: str = None, gas_payer_private: str = None):  # noqa: E501
         """FactoryCreateBody - a model defined in Swagger
 
         :param gas_payer: The gas_payer of this FactoryCreateBody.  # noqa: E501
         :type gas_payer: str
         :param gas_payer_private: The gas_payer_private of this FactoryCreateBody.  # noqa: E501
         :type gas_payer_private: str
-        :param network_id: The network_id of this FactoryCreateBody.  # noqa: E501
-        :type network_id: int
         """
-        self.swagger_types = {'gas_payer': str, 'gas_payer_private': str, 'network_id': int}
+        self.swagger_types = {'gas_payer': str, 'gas_payer_private': str}
 
         self.attribute_map = {
             'gas_payer': 'gasPayer',
             'gas_payer_private': 'gasPayerPrivate',
-            'network_id': 'networkId'
         }
         self._gas_payer = gas_payer
         self._gas_payer_private = gas_payer_private
-        self._network_id = network_id
 
     @classmethod
     def from_dict(cls, dikt) -> 'FactoryCreateBody':
@@ -90,24 +83,3 @@ class FactoryCreateBody(Model):
         """
 
         self._gas_payer_private = gas_payer_private
-
-    @property
-    def network_id(self) -> int:
-        """Gets the network_id of this FactoryCreateBody.
-
-
-        :return: The network_id of this FactoryCreateBody.
-        :rtype: int
-        """
-        return self._network_id
-
-    @network_id.setter
-    def network_id(self, network_id: int):
-        """Sets the network_id of this FactoryCreateBody.
-
-
-        :param network_id: The network_id of this FactoryCreateBody.
-        :type network_id: int
-        """
-
-        self._network_id = network_id
