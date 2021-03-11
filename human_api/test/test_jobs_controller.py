@@ -41,7 +41,7 @@ class TestJobsController(BaseTestCase):
         query_string = [('address', job.job_contract.address), ('gasPayer', GAS_PAYER),
                         ('gasPayerPrivate', GAS_PAYER_PRIV)]
         response = self.client.open('/job/abort', method='GET', query_string=query_string)
-        self.assert200(response, 'Response body is : ' + response.data.decode('utf-8'))
+        self.assert200(response, 'Response body is: ' + response.data.decode('utf-8'))
 
     def test_cancel_job(self):
         """Test case for cancel_job
@@ -57,7 +57,7 @@ class TestJobsController(BaseTestCase):
         query_string = [('address', job.job_contract.address), ('gasPayer', GAS_PAYER),
                         ('gasPayerPrivate', GAS_PAYER_PRIV)]
         response = self.client.open('/job/cancel', method='GET', query_string=query_string)
-        self.assert200(response, 'Response body is : ' + response.data.decode('utf-8'))
+        self.assert200(response, 'Response body is: ' + response.data.decode('utf-8'))
 
     def test_complete_job(self):
         """Test case for complete_job
@@ -77,8 +77,8 @@ class TestJobsController(BaseTestCase):
         query_string = [('address', job.job_contract.address), ('gasPayer', GAS_PAYER),
                         ('gasPayerPrivate', GAS_PAYER_PRIV)]
         response = self.client.open('/job/complete', method='GET', query_string=query_string)
-        self.assert200(response, 'Response body is : ' + response.data.decode('utf-8'))
-        self.assertTrue(response.data)
+        self.assert200(response, 'Response body is: ' + response.data.decode('utf-8'))
+        self.assertTrue(json.loads(response.data.decode('utf-8')).get("success", False))
 
     def test_get_job_balanace(self):
         """Test case for get_job_balanace
@@ -94,7 +94,7 @@ class TestJobsController(BaseTestCase):
         query_string = [('address', job.job_contract.address), ('gasPayer', GAS_PAYER),
                         ('gasPayerPrivate', GAS_PAYER_PRIV)]
         response = self.client.open('/job/balance', method='GET', query_string=query_string)
-        self.assert200(response, 'Response body is : ' + response.data.decode('utf-8'))
+        self.assert200(response, 'Response body is: ' + response.data.decode('utf-8'))
 
     def test_get_job_launcher(self):
         """Test case for get_job_launcher
@@ -109,7 +109,7 @@ class TestJobsController(BaseTestCase):
         query_string = [('address', job.job_contract.address), ('gasPayer', GAS_PAYER),
                         ('gasPayerPrivate', GAS_PAYER_PRIV)]
         response = self.client.open('/job/launcher', method='GET', query_string=query_string)
-        self.assert200(response, 'Response body is : ' + response.data.decode('utf-8'))
+        self.assert200(response, 'Response body is: ' + response.data.decode('utf-8'))
 
     def test_get_job_manifest_hash(self):
         """Test case for get_job_manifest_hash
@@ -124,7 +124,7 @@ class TestJobsController(BaseTestCase):
         query_string = [('address', job.job_contract.address), ('gasPayer', GAS_PAYER),
                         ('gasPayerPrivate', GAS_PAYER_PRIV)]
         response = self.client.open('/job/manifestHash', method='GET', query_string=query_string)
-        self.assert200(response, 'Response body is : ' + response.data.decode('utf-8'))
+        self.assert200(response, 'Response body is: ' + response.data.decode('utf-8'))
 
     def test_get_job_manifest_url(self):
         """Test case for get_job_manifest_url
@@ -139,7 +139,7 @@ class TestJobsController(BaseTestCase):
         query_string = [('address', job.job_contract.address), ('gasPayer', GAS_PAYER),
                         ('gasPayerPrivate', GAS_PAYER_PRIV)]
         response = self.client.open('/job/manifestUrl', method='GET', query_string=query_string)
-        self.assert200(response, 'Response body is : ' + response.data.decode('utf-8'))
+        self.assert200(response, 'Response body is: ' + response.data.decode('utf-8'))
 
     def test_get_job_status(self):
         """Test case for get_job_status
@@ -154,7 +154,7 @@ class TestJobsController(BaseTestCase):
         query_string = [('address', job.job_contract.address), ('gasPayer', GAS_PAYER),
                         ('gasPayerPrivate', GAS_PAYER_PRIV)]
         response = self.client.open('/job/status', method='GET', query_string=query_string)
-        self.assert200(response, 'Response body is : ' + response.data.decode('utf-8'))
+        self.assert200(response, 'Response body is: ' + response.data.decode('utf-8'))
 
     def test_new_job(self):
         """Test case for new_job
@@ -171,7 +171,7 @@ class TestJobsController(BaseTestCase):
                                     method='POST',
                                     data=json.dumps(body),
                                     content_type='application/json')
-        self.assert200(response, 'Response body is : ' + response.data.decode('utf-8'))
+        self.assert200(response, 'Response body is: ' + response.data.decode('utf-8'))
 
     def test_store_job_intermediate_results_job(self):
         """Test case for store_job_intermediate_results_job
@@ -191,8 +191,8 @@ class TestJobsController(BaseTestCase):
                                     method='POST',
                                     data=json.dumps(body),
                                     content_type='application/json')
-        self.assert200(response, 'Response body is : ' + response.data.decode('utf-8'))
-        self.assertTrue(response.data)
+        self.assert200(response, 'Response body is: ' + response.data.decode('utf-8'))
+        self.assertTrue(json.loads(response.data.decode('utf-8')).get("success", False))
 
     def test_bulk_payout_job(self):
         """Test case for bulk_payout_job
@@ -213,8 +213,8 @@ class TestJobsController(BaseTestCase):
                                     method='POST',
                                     data=json.dumps(body),
                                     content_type='application/json')
-        self.assert200(response, 'Response body is : ' + response.data.decode('utf-8'))
-        self.assertTrue(response.data)
+        self.assert200(response, 'Response body is: ' + response.data.decode('utf-8'))
+        self.assertTrue(json.loads(response.data.decode('utf-8')).get("success", False))
 
     def test_add_job_trusted_handlers(self):
         """Test case for add_job_trusted_handlers
@@ -237,8 +237,8 @@ class TestJobsController(BaseTestCase):
                                     method='POST',
                                     data=json.dumps(body),
                                     content_type='application/json')
-        self.assert200(response, 'Response body is : ' + response.data.decode('utf-8'))
-        self.assertTrue(response.data)
+        self.assert200(response, 'Response body is: ' + response.data.decode('utf-8'))
+        self.assertTrue(json.loads(response.data.decode('utf-8')).get("success", False))
 
     def test_intermediate_results_job(self):
         """Test case for intermediate_results_job
@@ -258,7 +258,7 @@ class TestJobsController(BaseTestCase):
         response = self.client.open('/job/intermediateResults',
                                     method='GET',
                                     query_string=query_string)
-        self.assert200(response, 'Response body is : ' + response.data.decode('utf-8'))
+        self.assert200(response, 'Response body is: ' + response.data.decode('utf-8'))
 
     def test_final_results_job(self):
         """Test case for final_results_job
@@ -277,7 +277,7 @@ class TestJobsController(BaseTestCase):
                         ('gasPayerPrivate', GAS_PAYER_PRIV),
                         ('repOraclePrivate', GAS_PAYER_PRIV.lstrip("0x"))]
         response = self.client.open('/job/finalResults', method='GET', query_string=query_string)
-        self.assert200(response, 'Response body is : ' + response.data.decode('utf-8'))
+        self.assert200(response, 'Response body is: ' + response.data.decode('utf-8'))
 
 
 if __name__ == '__main__':

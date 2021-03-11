@@ -28,7 +28,7 @@ class TestFactoryController(BaseTestCase):
         query_string = [('address', FACTORY_ADDRESS), ('gasPayer', GAS_PAYER),
                         ('gasPayerPrivate', GAS_PAYER_PRIV)]
         response = self.client.open('/factory', method='GET', query_string=query_string)
-        self.assert200(response, 'Response body is : ' + response.data.decode('utf-8'))
+        self.assert200(response, 'Response body is: ' + response.data.decode('utf-8'))
 
     def test_new_factory(self):
         """Test case for new_factory
@@ -40,7 +40,7 @@ class TestFactoryController(BaseTestCase):
                                     method='POST',
                                     data=json.dumps(body),
                                     content_type='application/json')
-        self.assert200(response, 'Response body is : ' + response.data.decode('utf-8'))
+        self.assert200(response, 'Response body is: ' + response.data.decode('utf-8'))
 
 
 if __name__ == '__main__':

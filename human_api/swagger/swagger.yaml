@@ -607,7 +607,7 @@ paths:
       - Jobs
       summary: Store intermediate results to S3 for the given escrow
       description: Given an escrow address, a URL where the results can be found in the form of a JSON file, and a public key will upload to S3 these intermediate results and will emit an event on the escrow contract
-      operationId: store_job_interemediate_results
+      operationId: store_job_intermediate_results
       requestBody:
         content:
           application/json:

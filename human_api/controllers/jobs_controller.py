@@ -259,7 +259,7 @@ def new_job(body=None):  # noqa: E501
             return ErrorParameterResponse(str(e), "rep_oracle_pub_key"), 401
 
 
-def store_job_interemediate_results(body=None):  # noqa: E501
+def store_job_intermediate_results(body=None):  # noqa: E501
     """Store intermediate results to S3 for the given escrow
 
     Given an escrow address, a URL where the results can be found in the form of a JSON file, and a public key will upload to S3 these intermediate results and will emit an event on the escrow contract # noqa: E501
