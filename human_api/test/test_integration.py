@@ -7,7 +7,7 @@ from six import BytesIO
 from decimal import Decimal
 
 from human_api.test import BaseTestCase
-from human_api.test.config import FACTORY_ADDRESS, GAS_PAYER, GAS_PAYER_PRIV, REP_ORACLE_PUB_KEY, RESULTS_PATH, PAYOUTS_PATH
+from human_api.test.config import FACTORY_ADDRESS, GAS_PAYER, GAS_PAYER_PRIV, REP_ORACLE_PUB_KEY, RESULTS_PATH, PAYOUTS_PATH, MANIFEST_PATH
 from human_api.models.factory_create_body import FactoryCreateBody
 from human_api.models.job_create_body import JobCreateBody
 from human_api.models.store_job_intermediate_results_body import StoreJobIntermediateResultsBody
@@ -32,9 +32,6 @@ class TestIntegration(BaseTestCase):
         factory_addr = json.loads(response.data.decode('utf-8')).get("data", "")
 
         #  Create the job
-        MANIFEST_PATH = "/work/human_api/test/dumps/test_manifest_file"
-        with open(f"{MANIFEST_PATH}", "w") as test_manifest_file:
-            test_manifest_file.write(json.dumps(test_model()))
         manifest_url = f"file://{MANIFEST_PATH}"
         body = JobCreateBody(GAS_PAYER, GAS_PAYER_PRIV, factory_addr,
                              REP_ORACLE_PUB_KEY.decode("utf-8"), manifest_url)
