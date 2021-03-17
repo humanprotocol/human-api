@@ -1,7 +1,7 @@
 #!/bin/bash
 set -exu
 
-default_lint='setup.py chainsync contracts human_api'
+default_lint='setup.py contracts human_api'
 LINT=${1-$default_lint}
 
 if [ -z ${CI+x} ]; then
