@@ -42,7 +42,7 @@ services:
       
   ganache:
     image: trufflesuite/ganache-cli:latest
-    command: node /app/ganache-core.docker.cli.js --noVMErrorsOnRPCResponse -m goat --hostname 0.0.0.0 --unlock 0x1413862c2b7054cdbfdc181b83962cb0fc11fd92 -g 1000
+    command: node /app/ganache-core.docker.cli.js --noVMErrorsOnRPCResponse -m goat --hostname 0.0.0.0 --unlock 0x1413862c2b7054cdbfdc181b83962cb0fc11fd92 -g 1000 -f https://humanprotocol-integration.skale.network
     ports:
       - 8545:8545
 
