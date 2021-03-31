@@ -7,6 +7,11 @@ This server is based on the spec defined [here](https://app.swaggerhub.com/apis/
 Python 3.7.2+
 
 ## Usage
+
+Copy the `.env.example` file and rename it to `.env`. Please paste there your `MNEMONIC`.
+
+Then, carefully fill up the brackets (`[]`) in the `docker-compose.yaml` file.
+
 To run the server, please execute the following from the root directory:
 
 ```

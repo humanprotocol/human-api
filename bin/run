@@ -3,7 +3,7 @@ set -exu
 
 ./bin/stop
 
-docker-compose up -d --build
+eval $(cat .env) docker-compose up -d --build
 docker-compose exec human-api bash -c "./bin/wait_deploy_run"
 
 for i in {1..400}; do
