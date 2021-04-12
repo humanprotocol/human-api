@@ -4,5 +4,5 @@ set -ex
 ./bin/stop
 
 docker-compose up -d
-docker-compose exec -e CI=true human-api ./bin/lint
-docker-compose exec human-api bash -c "TOX=true ./bin/wait_deploy_run"
+docker-compose exec -T -e CI=true human-api ./bin/lint
+docker-compose exec -T human-api bash -c "TOX=true ./bin/wait_deploy_run"
